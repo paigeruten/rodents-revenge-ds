@@ -1,14 +1,14 @@
-#ifndef _screen_h
-#define _screen_h
+#ifndef _canvas_h
+#define _canvas_h
 
 #include "color.h"
 
-class Screen {
+class Canvas {
 	public:
 		// Constructors
-		Screen(u32 the_width, u32 the_height);
-		Screen(u32 the_width, u32 the_height, Color *the_data);
-		~Screen();
+		Canvas(u32 the_width, u32 the_height);
+		Canvas(u32 the_width, u32 the_height, Color *the_data);
+		~Canvas();
 
 		// Accessors
 		u32 get_width() const { return width; }
@@ -18,7 +18,7 @@ class Screen {
 
 		// Methods
 		void plot(u32 x, u32 y, Color color);
-		void copy(Screen *destination, u32 x, u32 y);
+		void copy(Canvas *destination, u32 x, u32 y);
 		void clear(Color color);
 
 	private:
@@ -28,10 +28,8 @@ class Screen {
 		bool memory_allocated;
 };
 
-void init_screens(void);
-
-extern Screen screen_top;
-extern Screen screen_bottom;
+extern Canvas screen_top;
+extern Canvas screen_bottom;
 
 #endif
 

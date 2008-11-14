@@ -11,7 +11,7 @@ color.h - Typedefs the Color type as a u16. Defines macros for packing
 red-green-blue values into a u16 (the same way the DS screens represent colors)
 and unpacking them.
 
-screen.h, screen.cpp - A Screen is a 2-dimensional array of Colors. Screens
-can be created, copied onto other screens, and have pixels plotted on them. Two
-Screens are declared in screen.h (screen_top and screen_bottom) which represent
-the actual DS screens and constantly get displayed to the DS screens.
+canvas.h, canvas.cpp - A Canvas is a 2-dimensional array of Colors. Canvases
+can be created, copied onto other Canvases, and have pixels plotted on them. Two
+Canvases are declared in canvas.h (screen_top and screen_bottom) which represent
+the two DS screens and constantly get displayed to the DS screens.

@@ -1,0 +1,17 @@
+================================================================================
+
+                             Rodent's Revenge DS
+                   By Jeremy Ruten (jeremy.ruten@gmail.com)
+
+================================================================================
+
+--Files-------------------------------------------------------------------------
+
+color.h - Typedefs the Color type as a u16. Defines macros for packing
+red-green-blue values into a u16 (the same way the DS screens represent colors)
+and unpacking them.
+
+screen.h, screen.cpp - A Screen is a 2-dimensional array of Colors. Screens
+can be created, copied onto other screens, and have pixels plotted on them. Two
+Screens are declared in screen.h (screen_top and screen_bottom) which represent
+the actual DS screens and constantly get displayed to the DS screens.

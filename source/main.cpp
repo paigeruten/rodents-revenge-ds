@@ -2,6 +2,7 @@
 #include "fat.h"
 #include "canvas.h"
 #include "font.h"
+#include "keyboard.h"
 
 void init_screens(void) {
 	// Main screen turn on
@@ -53,13 +54,38 @@ int main(void) {
 		while (1);
 	}
 
+	// Init keyboard
+	Keyboard keyboard("/data/rodents-revenge/keyboards/default.kb", &screen_bottom, &font, 20, 80);
+	if (keyboard.get_status() == KEYBOARD_FILE_NOT_FOUND) {
+		font.print_string("Keyboard file not found.", 5, 20, &screen_top, RGB(31, 31, 31));
+		while(1);
+	}
+
 	// Test Canvas and Font classes together.
 	Canvas canvas(100, 20);
 	canvas.clear(RGB(31, 31, 31));
 	font.print_string_center("Testing!", 1, &canvas, RGB(0, 0, 0));
 	canvas.copy(&screen_top, 30, 30);
 
+	// Test keyboard
+	keyboard.draw(false);
+
+	bool shift = false;
+	touchPosition stylus;
 	while (1) {
+		scanKeys();
+		stylus = touchReadXY();
+
+		if (keysHeld() & (KEY_L | KEY_R)) {
+			shift = true;
+			keyboard.draw(shift);
+		} else {
+			shift = false;
+			keyboard.draw(shift);
+		}
+
+		keyboard.key_pressed(shift, stylus.px, stylus.py);
+
 		swiWaitForVBlank();
 	}
 

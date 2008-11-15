@@ -15,3 +15,9 @@ canvas.h, canvas.cpp - A Canvas is a 2-dimensional array of Colors. Canvases
 can be created, copied onto other Canvases, and have pixels plotted on them. Two
 Canvases are declared in canvas.h (screen_top and screen_bottom) which represent
 the two DS screens and constantly get displayed to the DS screens.
+
+font.h, font.cpp - Loads a font from the file system and provides methods for
+displaying strings onto Canvases.
+
+str.h, str.cpp - Contains string operation functions such as converting strings
+to integers and integers to strings.

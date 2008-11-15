@@ -1,4 +1,7 @@
 #include <nds.h>
+#include "fat.h"
+#include "canvas.h"
+#include "font.h"
 
 void init_screens(void) {
 	// Main screen turn on
@@ -25,6 +28,36 @@ int main(void) {
 	irqEnable(IRQ_VBLANK);
 
 	init_screens();
+
+	screen_top.clear(RGB(0, 0, 0));
+	screen_bottom.clear(RGB(0, 0, 0));
+
+	// Init FAT (Displays green screens if it fails)
+	if (!fatInitDefault()) {
+		screen_top.clear(RGB(0, 31, 0));
+		screen_bottom.clear(RGB(0, 31, 0));
+		while (1);
+	}
+
+	// Init font (Displays red screens if it can't find the font file, blue screens if the font file is invalid)
+	Font font("/data/rodents-revenge/fonts/sans.font");
+	if (font.get_status() == FONT_OK) {
+		font.print_string("Font loaded.", 5, 5, &screen_top, RGB(31, 31, 31));
+	} else if (font.get_status() == FONT_ERR_FILE_NOT_FOUND) {
+		screen_top.clear(RGB(31, 0, 0));
+		screen_bottom.clear(RGB(31, 0, 0));
+		while (1);
+	} else if (font.get_status() == FONT_ERR_INVALID_FONT_FILE) {
+		screen_top.clear(RGB(0, 0, 31));
+		screen_bottom.clear(RGB(0, 0, 31));
+		while (1);
+	}
+
+	// Test Canvas and Font classes together.
+	Canvas canvas(100, 20);
+	canvas.clear(RGB(31, 31, 31));
+	font.print_string_center("Testing!", 1, &canvas, RGB(0, 0, 0));
+	canvas.copy(&screen_top, 30, 30);
 
 	while (1) {
 		swiWaitForVBlank();

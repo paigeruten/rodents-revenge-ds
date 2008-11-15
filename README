@@ -5,7 +5,37 @@
 
 ================================================================================
 
---Files-------------------------------------------------------------------------
+--Data Files--------------------------------------------------------------------
+
+.font files - Font files are text files containing all the information the Font
+class needs to write text to the screen. This is the format of a .font file:
+
+    1. The maximum width of the font in pixels (a number), followed by a
+       newline.
+    2. The height of the font, followed by a newline.
+    3. The number of pixels in between each character horizontally, followed by
+       a newline.
+    4. Another newline. (So there is a blank line.)
+    5. 128 numbers separated by newlines. The first number is the width of the
+       character with ASCII code 0, the next number is the width of the
+       character with ASCII code 1, etc.
+    6. Another newline. (So there is a blank line.)
+    7. From here on is the font data. A '0' char represents a blank pixel, and a
+       '1' char represents a filled pixel. The font loader will ignore all chars
+       other than '1' and '0' so you can format this however you want with all
+       the whitespace you want. I format it like this:
+
+           01000
+           10100
+           11100
+           10100
+           10100
+
+       That would be a very small capital 'A'. Make sure you pad it with zeroes
+       on the right if the character is smaller than the maximum width of the
+       font.
+
+--C++ Files---------------------------------------------------------------------
 
 color.h - Typedefs the Color type as a u16. Defines macros for packing
 red-green-blue values into a u16 (the same way the DS screens represent colors)

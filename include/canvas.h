@@ -20,7 +20,7 @@ class Canvas {
 		Color get_pixel(u32 x, u32 y) const { return data[x + y * width]; }
 
 		// Methods
-		void plot(u32 x, u32 y, Color color);
+		void plot(u32 x, u32 y, Color color) { data[x + y * width] = color; }
 		void rect(u32 upper_left_x, u32 upper_left_y, u32 lower_right_x, u32 lower_right_y, Color color, bool filled);
 		void copy(Canvas *destination, u32 x, u32 y);
 		void clear(Color color);

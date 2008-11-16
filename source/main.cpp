@@ -54,11 +54,23 @@ int main(void) {
 		while (1);
 	}
 
+	// Init keyboard font
+	Font keyboard_font("/data/rodents-revenge/fonts/keyboard.font");
+	if (keyboard_font.get_status() == FONT_OK) {
+		font.print_string("Keyboard font loaded.", 5, 20, &screen_top, RGB(31, 31, 31));
+	} else if (keyboard_font.get_status() == FONT_ERR_FILE_NOT_FOUND) {
+		font.print_string("Keyboard font file not found!", 5, 20, &screen_top, RGB(31, 31, 31));
+		while (1);
+	} else if (keyboard_font.get_status() == FONT_ERR_INVALID_FONT_FILE) {
+		font.print_string("Keyboard font file invalid!", 5, 20, &screen_top, RGB(31, 31, 31));
+		while (1);
+	}
+
 	// Init keyboard
-	Keyboard keyboard("/data/rodents-revenge/keyboards/default.kb", &screen_bottom, &font, 20, 80);
+	Keyboard keyboard("/data/rodents-revenge/keyboards/default.kb", &screen_bottom, &keyboard_font, 16, 112);
 	if (keyboard.get_status() == KEYBOARD_FILE_NOT_FOUND) {
-		font.print_string("Keyboard file not found.", 5, 20, &screen_top, RGB(31, 31, 31));
-		while(1);
+		font.print_string("Keyboard file not found.", 5, 35, &screen_top, RGB(31, 31, 31));
+		while (1);
 	}
 
 	// Test Canvas and Font classes together.
@@ -68,6 +80,7 @@ int main(void) {
 	canvas.copy(&screen_top, 30, 30);
 
 	// Test keyboard
+	keyboard.set_xy(5, 5);
 	keyboard.draw(false);
 
 	bool shift = false;
@@ -76,10 +89,12 @@ int main(void) {
 		scanKeys();
 		stylus = touchReadXY();
 
-		if (keysHeld() & (KEY_L | KEY_R)) {
+		if ((keysHeld() & (KEY_L | KEY_R)) && !shift) {
 			shift = true;
 			keyboard.draw(shift);
-		} else {
+		}
+
+		if (!(keysHeld() & (KEY_L | KEY_R)) && shift) {
 			shift = false;
 			keyboard.draw(shift);
 		}

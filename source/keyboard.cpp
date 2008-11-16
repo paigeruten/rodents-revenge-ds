@@ -35,8 +35,9 @@ char Keyboard::key_pressed(bool shift, u16 stylus_x, u16 stylus_y) {
 	}
 
 	// Loop through the keyboard keys
-	u8 put_x = keyboard_x;
-	u8 put_y = keyboard_y;
+	u8 current_key_x = keyboard_x;
+	u8 current_key_y = keyboard_y;
+	char the_pressed_key = '\0';
 	for (u16 current_key_index = 0; keyboard[which_keyboard][current_key_index]; current_key_index++) {
 		char current_key = keyboard[which_keyboard][current_key_index];
 
@@ -46,22 +47,22 @@ char Keyboard::key_pressed(bool shift, u16 stylus_x, u16 stylus_y) {
 		switch (current_key) {
 			// Tab char represents a space between keys, half of the width of a key
 			case '\t':
-				put_x += key_width / 2;
+				current_key_x += key_width / 2;
 				break;
 
 			// This char represents a new row of keys (like a newline
 			// except I'm using '\n' to represent the enter key).
 			case KEYBOARD_NEW_ROW:
-				put_x = keyboard_x;
-				put_y += key_width;
+				current_key_x = keyboard_x;
+				current_key_y += key_width;
 				break;
 
 			default:
 				// Check if key is pressed.
-				key_left = put_x;
-				key_right = put_x + key_width;
-				key_top = put_y;
-				key_bottom = put_y + key_width;
+				key_left = current_key_x;
+				key_right = current_key_x + key_width;
+				key_top = current_key_y;
+				key_bottom = current_key_y + key_width;
 
 				// Space bar could have a different width
 				if (current_key == ' ') {
@@ -70,26 +71,25 @@ char Keyboard::key_pressed(bool shift, u16 stylus_x, u16 stylus_y) {
 
 				key_pressed = ((keysHeld() & KEY_TOUCH) &&
 				               stylus_x >= key_left &&
-				               stylus_x <= key_right &&
+				               stylus_x < key_right &&
 				               stylus_y >= key_top &&
-				               stylus_y <= key_bottom);
+				               stylus_y < key_bottom);
 
 				if (key_pressed) {
-					print_key(current_key, put_x, put_y, KEY_HIGHLIGHTED);
-					highlighted_key = current_key;
-
-					return current_key;
-				} else if (highlighted_key == current_key) {
+					print_key(current_key, current_key_x, current_key_y, KEY_HIGHLIGHTED);
+					the_pressed_key = current_key;
+				} else {
 					// The currently highlighted key is not pressed so unhighlight it.
-					print_key(current_key, put_x, put_y, !KEY_HIGHLIGHTED);
-					highlighted_key = '\0';
+					print_key(current_key, current_key_x, current_key_y, !KEY_HIGHLIGHTED);
 				}
 
-				put_x += key_width;
+				current_key_x += key_width;
 		}
 	}
 
-	return '\0';
+	highlighted_key = the_pressed_key;
+
+	return the_pressed_key;
 }
 
 KeyboardStatus Keyboard::load_keyboard(const char *filename) {

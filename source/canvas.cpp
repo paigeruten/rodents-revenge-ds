@@ -25,13 +25,20 @@ Canvas::~Canvas() {
 	}
 }
 
-void Canvas::plot(u32 x, u32 y, Color color) {
-	if (x < width && y < height) {
-		data[x + y * width] = color;
-	}
-}
-
 void Canvas::rect(u32 upper_left_x, u32 upper_left_y, u32 lower_right_x, u32 lower_right_y, Color color, bool filled) {
+	// Don't try to print the box if it's completely out of range of the canvas.
+	if (upper_left_x >= width || upper_left_y >= height) {
+		return;
+	}
+
+	// Make box smaller if the lower-right corner is out of range of the canvas.
+	if (lower_right_x >= width) {
+		lower_right_x = width - 1;
+	}
+	if (lower_right_y >= height) {
+		lower_right_y = height - 1;
+	}
+
 	if (filled) {
 		// Draw a filled-in rectangle.
 		for (u32 put_x = upper_left_x; put_x < lower_right_x; put_x++) {
@@ -54,13 +61,26 @@ void Canvas::rect(u32 upper_left_x, u32 upper_left_y, u32 lower_right_x, u32 low
 }
 
 void Canvas::copy(Canvas *destination, u32 x, u32 y) {
-	u32 get_x, get_y;
+	if (x >= destination->get_width() || y >= destination->get_height()) {
+		return;
+	}
 
-	get_x = 0;
-	for (u32 put_x = x; put_x < x + width; put_x++) {
-		get_y = 0;
-		for (u32 put_y = y; put_y < y + height; put_y++) {
-			destination->plot(put_x, put_y, data[get_x + get_y * width]);
+	// Don't write into other areas of memory if this canvas won't fit on the
+	// destination canvas.
+	u32 right_limit = x + width;
+	u32 bottom_limit = y + height;
+	if (x + width >= destination->get_width()) {
+		right_limit = destination->get_width();
+	}
+	if (y + height >= destination->get_height()) {
+		bottom_limit = destination->get_height();
+	}
+
+	u32 get_x = 0;
+	for (u32 put_x = x; put_x < right_limit; put_x++) {
+		u32 get_y = 0;
+		for (u32 put_y = y; put_y < bottom_limit; put_y++) {
+			destination->plot(put_x, put_y, get_pixel(get_x, get_y));
 			get_y++;
 		}
 		get_x++;

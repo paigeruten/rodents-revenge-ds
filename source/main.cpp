@@ -87,13 +87,8 @@ int main(void) {
 		scanKeys();
 		stylus = touchReadXY();
 
-		if ((keysHeld() & (KEY_L | KEY_R)) && !keyboard.get_shift()) {
-			keyboard.set_shift(true);
-			keyboard.draw();
-		}
-
-		if (!(keysHeld() & (KEY_L | KEY_R)) && keyboard.get_shift()) {
-			keyboard.set_shift(false);
+		if (keysDown() & (KEY_L | KEY_R)) {
+			keyboard.set_shift(!keyboard.get_shift());
 			keyboard.draw();
 		}
 

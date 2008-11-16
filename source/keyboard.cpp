@@ -212,6 +212,8 @@ void Keyboard::print_key(char key, u16 x, u16 y, bool highlighted) const {
 }
 
 void Keyboard::draw() const {
+	canvas->clear(colors.background);
+
 	// Use alternate keyboard if they are holding shift
 	u8 which_keyboard;
 	if (shift) {

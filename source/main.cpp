@@ -80,26 +80,24 @@ int main(void) {
 	canvas.copy(&screen_top, 30, 30);
 
 	// Test keyboard
-	keyboard.set_xy(5, 5);
-	keyboard.draw(false);
+	keyboard.draw();
 
-	bool shift = false;
 	touchPosition stylus;
 	while (1) {
 		scanKeys();
 		stylus = touchReadXY();
 
-		if ((keysHeld() & (KEY_L | KEY_R)) && !shift) {
-			shift = true;
-			keyboard.draw(shift);
+		if ((keysHeld() & (KEY_L | KEY_R)) && !keyboard.get_shift()) {
+			keyboard.set_shift(true);
+			keyboard.draw();
 		}
 
-		if (!(keysHeld() & (KEY_L | KEY_R)) && shift) {
-			shift = false;
-			keyboard.draw(shift);
+		if (!(keysHeld() & (KEY_L | KEY_R)) && keyboard.get_shift()) {
+			keyboard.set_shift(false);
+			keyboard.draw();
 		}
 
-		keyboard.key_pressed(shift, stylus.px, stylus.py);
+		keyboard.key_pressed(stylus.px, stylus.py);
 
 		swiWaitForVBlank();
 	}

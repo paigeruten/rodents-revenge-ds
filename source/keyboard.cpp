@@ -8,10 +8,13 @@ Keyboard::Keyboard(const char *filename, Canvas *the_canvas, Font *the_font, u8 
 	font = the_font;
 	key_width = the_key_width;
 	status = load_keyboard(filename);
-	keyboard_x = 0;
-	keyboard_y = 0;
 	width_of_space_bar = space_bar_width;
 	highlighted_key = '\0';
+	shift = false;
+
+	// Center the keyboard horizontally, align near the bottom vertically.
+	keyboard_x = (canvas->get_width() - calculate_keyboard_width()) / 2;
+	keyboard_y = canvas->get_height() - calculate_keyboard_height() - 15;
 
 	// Default colors
 	colors.line = RGB(15, 15, 15);
@@ -25,7 +28,7 @@ Keyboard::Keyboard(const char *filename, Canvas *the_canvas, Font *the_font, u8 
 Keyboard::~Keyboard() {
 }
 
-char Keyboard::key_pressed(bool shift, u16 stylus_x, u16 stylus_y) {
+char Keyboard::key_pressed(u16 stylus_x, u16 stylus_y) {
 	// Use alternate keyboard if they are holding shift
 	u8 which_keyboard;
 	if (shift) {
@@ -208,7 +211,7 @@ void Keyboard::print_key(char key, u16 x, u16 y, bool highlighted) const {
 	font->print_char(key, middle_x, middle_y, canvas, text_color);
 }
 
-void Keyboard::draw(bool shift) const {
+void Keyboard::draw() const {
 	// Use alternate keyboard if they are holding shift
 	u8 which_keyboard;
 	if (shift) {
@@ -221,9 +224,8 @@ void Keyboard::draw(bool shift) const {
 	u8 current_key_index = 0;
 	u32 put_x = keyboard_x;
 	u32 put_y = keyboard_y;
-	while (keyboard[which_keyboard][current_key_index]) {
-		char current_key = keyboard[which_keyboard][current_key_index];
-
+	char current_key;
+	while ((current_key = keyboard[which_keyboard][current_key_index])) {
 		switch (current_key) {
 			case '\t':
 				put_x += key_width / 2;
@@ -241,5 +243,62 @@ void Keyboard::draw(bool shift) const {
 
 		current_key_index++;
 	}
+}
+
+u32 Keyboard::calculate_keyboard_width() {
+	u32 max_width = 0;
+
+	for (u8 current_keyboard = 0; current_keyboard <= 1; current_keyboard++) {
+		u8 current_key_index = 0;
+		u32 width = 0;
+		char current_key;
+
+		while ((current_key = keyboard[current_keyboard][current_key_index])) {
+			switch (current_key) {
+				case '\t':
+					width += key_width / 2;
+					break;
+
+				case KEYBOARD_NEW_ROW:
+					if (width > max_width) {
+						max_width = width;
+					}
+
+					width = 0;
+					break;
+
+				default:
+					width += key_width;
+			}
+
+			current_key_index++;
+		}
+	}
+
+	return max_width;
+}
+
+u32 Keyboard::calculate_keyboard_height() {
+	u32 max_height = 0;
+
+	for (u8 current_keyboard = 0; current_keyboard <= 1; current_keyboard++) {
+		u8 current_key_index = 0;
+		u32 height = 0;
+		char current_key;
+
+		while ((current_key = keyboard[current_keyboard][current_key_index])) {
+			if (current_key == KEYBOARD_NEW_ROW) {
+				height += key_width;
+			}
+
+			current_key_index++;
+		}
+
+		if (height > max_height) {
+			max_height = height;
+		}
+	}
+
+	return max_height;
 }
 

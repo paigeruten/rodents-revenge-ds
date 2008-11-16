@@ -29,22 +29,21 @@ class Keyboard {
 		~Keyboard();
 
 		// Returns key that is currently pressed, and highlights/unhighlights it
-		char key_pressed(bool shift, u16 stylus_x, u16 stylus_y);
+		char key_pressed(u16 stylus_x, u16 stylus_y);
 
 		// Load keyboard layout from file
 		KeyboardStatus load_keyboard(const char *filename);
 
 		// Screen output
 		void print_key(char key, u16 x, u16 y, bool highlighted=false) const;
-		void draw(bool shift) const;
+		void draw() const;
 
 		// Accessors
 		void set_colors(KeyboardColors new_colors) { colors = new_colors; }
 		u8 get_status() const { return status; }
-		u8 get_x() const { return keyboard_x; }
-		u8 get_y() const { return keyboard_y; }
-		void set_xy(u8 x, u8 y) { keyboard_x = x; keyboard_y = y; }
 		void set_canvas(Canvas *new_canvas) { canvas = new_canvas; }
+		void set_shift(bool new_shift) { shift = new_shift; }
+		bool get_shift() const { return shift; }
 
 	private:
 		Canvas *canvas;
@@ -52,11 +51,15 @@ class Keyboard {
 		char keyboard[2][255];
 		u8 key_width;
 		KeyboardStatus status;
-		u8 keyboard_x;
-		u8 keyboard_y;
+		u16 keyboard_x;
+		u16 keyboard_y;
 		u8 width_of_space_bar;
 		char highlighted_key;
 		KeyboardColors colors;
+		bool shift;
+
+		u32 calculate_keyboard_width();
+		u32 calculate_keyboard_height();
 };
 
 #endif

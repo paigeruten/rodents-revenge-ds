@@ -3,6 +3,7 @@
 #include "canvas.h"
 #include "font.h"
 #include "keyboard.h"
+#include "tile.h"
 
 void init_screens(void) {
 	// Main screen turn on
@@ -78,6 +79,13 @@ int main(void) {
 	canvas.clear(RGB(31, 31, 31));
 	font.print_string_center("Testing!", 1, &canvas, RGB(0, 0, 0));
 	canvas.copy(&screen_top, 30, 30);
+
+	// Test tiles
+	Canvas tile_canvas(20, 20);
+	tile_canvas.clear(RGB(31, 31, 31));
+	Tile tile("/data/rodents-revenge/tiles/mouse.tile");
+	tile.draw(&tile_canvas, 2, 3);
+	tile_canvas.copy(&screen_top, 50, 100);
 
 	// Test keyboard
 	keyboard.draw();

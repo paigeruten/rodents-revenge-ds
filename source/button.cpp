@@ -42,8 +42,6 @@ void Button::draw() const {
 }
 
 ButtonState Button::update(touchPosition stylus) {
-	static touchPosition last_stylus;
-
 	bool stylus_on_button = stylus_on(stylus);
 
 	bool stylus_down = keysDown() & KEY_TOUCH;

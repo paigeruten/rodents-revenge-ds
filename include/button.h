@@ -52,6 +52,7 @@ class Button {
 		ButtonState state;
 		u32 text_x;
 		u32 text_y;
+		touchPosition last_stylus;
 
 		bool stylus_on(touchPosition stylus) const;
 		void center_text();

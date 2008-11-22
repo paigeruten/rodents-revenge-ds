@@ -5,6 +5,8 @@
 #include "keyboard.h"
 #include "tile.h"
 #include "tilemap.h"
+#include "button.h"
+#include "menu.h"
 
 void init_screens(void) {
 	// Main screen turn on
@@ -26,14 +28,17 @@ void init_screens(void) {
 	BACKGROUND_SUB.bg3_rotation.ydy = 1 << 8;
 }
 
+void blah() {
+}
+
 int main(void) {
 	irqInit();
 	irqEnable(IRQ_VBLANK);
 
 	init_screens();
 
-	screen_top.clear(RGB(0, 0, 0));
-	screen_bottom.clear(RGB(0, 0, 0));
+	screen_top.clear(RGB(31, 31, 31));
+	screen_bottom.clear(RGB(31, 31, 31));
 
 	// Init FAT (Displays green screens if it fails)
 	if (!fatInitDefault()) {
@@ -42,64 +47,60 @@ int main(void) {
 		while (1);
 	}
 
-	// Init font (Displays red screens if it can't find the font file, blue screens if the font file is invalid)
+	// Init font
 	Font font("/data/rodents-revenge/fonts/sans.font");
-	if (font.get_status() == FONT_OK) {
-		font.print_string("Font loaded.", 5, 5, &screen_top, RGB(31, 31, 31));
-	} else if (font.get_status() == FONT_ERR_FILE_NOT_FOUND) {
-		screen_top.clear(RGB(31, 0, 0));
-		screen_bottom.clear(RGB(31, 0, 0));
-		while (1);
-	} else if (font.get_status() == FONT_ERR_INVALID_FONT_FILE) {
-		screen_top.clear(RGB(0, 0, 31));
-		screen_bottom.clear(RGB(0, 0, 31));
-		while (1);
-	}
 
-	// Init keyboard font
-	Font keyboard_font("/data/rodents-revenge/fonts/keyboard.font");
-	if (keyboard_font.get_status() == FONT_OK) {
-		font.print_string("Keyboard font loaded.", 5, 20, &screen_top, RGB(31, 31, 31));
-	} else if (keyboard_font.get_status() == FONT_ERR_FILE_NOT_FOUND) {
-		font.print_string("Keyboard font file not found!", 5, 20, &screen_top, RGB(31, 31, 31));
-		while (1);
-	} else if (keyboard_font.get_status() == FONT_ERR_INVALID_FONT_FILE) {
-		font.print_string("Keyboard font file invalid!", 5, 20, &screen_top, RGB(31, 31, 31));
-		while (1);
-	}
+	// Test menus
+	Menu main_menu(&screen_bottom, RGB(26, 26, 26));
+	Menu play_game_menu(&screen_bottom, RGB(26, 26, 26));
+	Menu options_menu(&screen_bottom, RGB(26, 26, 26));
+	Menu high_scores_menu(&screen_bottom, RGB(26, 26, 26));
 
-	// Init keyboard
-	Keyboard keyboard("/data/rodents-revenge/keyboards/default.kb", &screen_bottom, &keyboard_font, 16, 112);
-	if (keyboard.get_status() == KEYBOARD_FILE_NOT_FOUND) {
-		font.print_string("Keyboard file not found.", 5, 35, &screen_top, RGB(31, 31, 31));
-		while (1);
-	}
+	ButtonColors button_colors, button_pressed_colors;
+	button_colors.border = RGB(3, 3, 3);
+	button_colors.background = RGB(20, 20, 20);
+	button_colors.text = RGB(15, 0, 0);
 
-	// Test tiles
-	Tile tile("/data/rodents-revenge/tiles/mouse.tile");
-	TileMap map(&screen_top, 5, 5, 15, 15);
-	TileNum TILE_MOUSE = map.add_tile(&tile);
-	map.set_tile(0, 0, TILE_MOUSE);
-	map.set_tile(1, 1, TILE_MOUSE);
-	map.set_tile(2, 2, TILE_MOUSE);
-	map.draw(50, 50);
+	button_pressed_colors = button_colors;
+	button_pressed_colors.background = RGB(27, 27, 27);
 
-	// Test keyboard
-	keyboard.draw();
+	Button button_play_game(&screen_bottom, &font, "Play Game"); button_play_game.set_colors(button_colors, button_pressed_colors);
+	Button button_high_scores(&screen_bottom, &font, "High Scores");button_high_scores.set_colors(button_colors, button_pressed_colors);
+	Button button_options(&screen_bottom, &font, "Options");button_options.set_colors(button_colors, button_pressed_colors);
 
-	touchPosition stylus;
+	Button button_back(&screen_bottom, &font, "Back");button_back.set_colors(button_colors, button_pressed_colors);
+
+	Button button_level1(&screen_bottom, &font, "Level 1");button_level1.set_colors(button_colors, button_pressed_colors);
+	Button button_level2(&screen_bottom, &font, "Level 2");button_level2.set_colors(button_colors, button_pressed_colors);
+	Button button_level3(&screen_bottom, &font, "Level 3");button_level3.set_colors(button_colors, button_pressed_colors);
+	Button button_next(&screen_bottom, &font, ">>>");button_next.set_colors(button_colors, button_pressed_colors);
+
+	Button button_wifi(&screen_bottom, &font, "Wi-Fi High Scores");button_wifi.set_colors(button_colors, button_pressed_colors);
+	Button button_local(&screen_bottom, &font, "Local High Scores");button_local.set_colors(button_colors, button_pressed_colors);
+
+	Button button_reset(&screen_bottom, &font, "Reset High Scores");button_reset.set_colors(button_colors, button_pressed_colors);
+
+	main_menu.add_button(&button_play_game, &play_game_menu);
+	main_menu.add_button(&button_high_scores, &high_scores_menu);
+	main_menu.add_button(&button_options, &options_menu);
+
+	play_game_menu.add_button(&button_back, &main_menu);
+	play_game_menu.add_button(&button_level1, &blah);
+	play_game_menu.add_button(&button_level2, &blah);
+	play_game_menu.add_button(&button_level3, &blah);
+	play_game_menu.add_button(&button_next, &play_game_menu);
+
+	options_menu.add_button(&button_back, &main_menu);
+	options_menu.add_button(&button_reset, &blah);
+
+	high_scores_menu.add_button(&button_back, &main_menu);
+	high_scores_menu.add_button(&button_wifi, &blah);
+	high_scores_menu.add_button(&button_local, &blah);
+
+	Menu *menu = &main_menu;
+
 	while (1) {
-		scanKeys();
-		stylus = touchReadXY();
-
-		if (keysDown() & (KEY_L | KEY_R)) {
-			keyboard.set_shift(!keyboard.get_shift());
-			keyboard.draw();
-		}
-
-		keyboard.key_pressed(stylus.px, stylus.py);
-
-		swiWaitForVBlank();
+		menu = menu->select();
 	}
 
 	return 0;

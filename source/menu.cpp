@@ -3,8 +3,9 @@
 #include "button.h"
 #include "menu.h"
 
-Menu::Menu(Canvas *the_canvas, Color background) {
+Menu::Menu(Canvas *the_canvas, Font *the_font, Color background) {
 	canvas = the_canvas;
+	font = the_font;
 	background_color = background;
 
 	for (u8 i = 0; i < MAX_BUTTONS; i++) {
@@ -15,6 +16,12 @@ Menu::Menu(Canvas *the_canvas, Color background) {
 }
 
 Menu::~Menu() {
+	for (u8 i = 0; i < MAX_BUTTONS; i++) {
+		if (buttons[i]) {
+			delete buttons[i];
+			buttons[i] = 0;
+		}
+	}
 }
 
 Menu *Menu::select() {
@@ -54,25 +61,26 @@ void Menu::draw() {
 	}
 }
 
-void Menu::add_button(Button *button, Menu *submenu) {
-	for (u8 i = 0; i < MAX_BUTTONS; i++) {
-		if (!buttons[i]) {
-			buttons[i] = button;
-			submenus[i] = submenu;
-
-			buttons[i]->set_width(canvas->get_width() - BUTTON_MARGIN_LEFT * 2);
-			break;
-		}
-	}
+void Menu::add_button(const char *button_text, Menu *submenu) {
+	add_button(button_text, submenu, 0);
 }
 
-void Menu::add_button(Button *button, void (*action)()) {
+void Menu::add_button(const char *button_text, void (*action)()) {
+	add_button(button_text, 0, action);
+}
+
+void Menu::add_button(const char *button_text, Menu *submenu, void (*action)()) {
 	for (u8 i = 0; i < MAX_BUTTONS; i++) {
 		if (!buttons[i]) {
-			buttons[i] = button;
-			actions[i] = action;
+			// Create button
+			buttons[i] = new Button;
+			buttons[i]->init(canvas, font, button_text);
+			buttons[i]->set_colors(button_colors, button_pressed_colors);
+			buttons[i]->set_width(button_widths);
+			buttons[i]->set_height(button_heights);
 
-			buttons[i]->set_width(canvas->get_width() - BUTTON_MARGIN_LEFT * 2);
+			actions[i] = action;
+			submenus[i] = submenu;
 			break;
 		}
 	}
@@ -84,7 +92,7 @@ void Menu::arrange_buttons() {
 
 	for (u8 i = 0; i < MAX_BUTTONS; i++) {
 		if (buttons[i]) {
-			buttons[i]->set_position(BUTTON_MARGIN_LEFT, (i * button_space) + ((button_space - buttons[i]->get_height()) / 2));
+			buttons[i]->set_position((canvas->get_width() - buttons[i]->get_width()) / 2, (i * button_space) + ((button_space - buttons[i]->get_height()) / 2));
 		}
 	}
 }

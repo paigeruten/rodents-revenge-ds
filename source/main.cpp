@@ -51,51 +51,51 @@ int main(void) {
 	Font font("/data/rodents-revenge/fonts/sans.font");
 
 	// Test menus
-	Menu main_menu(&screen_bottom, RGB(26, 26, 26));
-	Menu play_game_menu(&screen_bottom, RGB(26, 26, 26));
-	Menu options_menu(&screen_bottom, RGB(26, 26, 26));
-	Menu high_scores_menu(&screen_bottom, RGB(26, 26, 26));
+	Menu main_menu(&screen_bottom, &font, RGB(26, 26, 26));
+	Menu play_game_menu(&screen_bottom, &font, RGB(26, 26, 26));
+	Menu options_menu(&screen_bottom, &font, RGB(26, 26, 26));
+	Menu high_scores_menu(&screen_bottom, &font, RGB(26, 26, 26));
 
-	ButtonColors button_colors, button_pressed_colors;
+	ButtonColors button_colors;
 	button_colors.border = RGB(3, 3, 3);
 	button_colors.background = RGB(20, 20, 20);
 	button_colors.text = RGB(15, 0, 0);
 
-	button_pressed_colors = button_colors;
+	ButtonColors button_pressed_colors = button_colors;
 	button_pressed_colors.background = RGB(27, 27, 27);
 
-	Button button_play_game(&screen_bottom, &font, "Play Game"); button_play_game.set_colors(button_colors, button_pressed_colors);
-	Button button_high_scores(&screen_bottom, &font, "High Scores");button_high_scores.set_colors(button_colors, button_pressed_colors);
-	Button button_options(&screen_bottom, &font, "Options");button_options.set_colors(button_colors, button_pressed_colors);
+	main_menu.set_button_widths(SCREEN_WIDTH - 64);
+	main_menu.set_button_heights(32);
+	main_menu.set_button_colors(button_colors, button_pressed_colors);
 
-	Button button_back(&screen_bottom, &font, "Back");button_back.set_colors(button_colors, button_pressed_colors);
+	play_game_menu.set_button_widths(SCREEN_WIDTH - 64);
+	play_game_menu.set_button_heights(32);
+	play_game_menu.set_button_colors(button_colors, button_pressed_colors);
 
-	Button button_level1(&screen_bottom, &font, "Level 1");button_level1.set_colors(button_colors, button_pressed_colors);
-	Button button_level2(&screen_bottom, &font, "Level 2");button_level2.set_colors(button_colors, button_pressed_colors);
-	Button button_level3(&screen_bottom, &font, "Level 3");button_level3.set_colors(button_colors, button_pressed_colors);
-	Button button_next(&screen_bottom, &font, ">>>");button_next.set_colors(button_colors, button_pressed_colors);
+	options_menu.set_button_widths(SCREEN_WIDTH - 64);
+	options_menu.set_button_heights(32);
+	options_menu.set_button_colors(button_colors, button_pressed_colors);
 
-	Button button_wifi(&screen_bottom, &font, "Wi-Fi High Scores");button_wifi.set_colors(button_colors, button_pressed_colors);
-	Button button_local(&screen_bottom, &font, "Local High Scores");button_local.set_colors(button_colors, button_pressed_colors);
+	high_scores_menu.set_button_widths(SCREEN_WIDTH - 64);
+	high_scores_menu.set_button_heights(32);
+	high_scores_menu.set_button_colors(button_colors, button_pressed_colors);
 
-	Button button_reset(&screen_bottom, &font, "Reset High Scores");button_reset.set_colors(button_colors, button_pressed_colors);
+	main_menu.add_button("Play Game", &play_game_menu);
+	main_menu.add_button("High Scores", &high_scores_menu);
+	main_menu.add_button("Options", &options_menu);
 
-	main_menu.add_button(&button_play_game, &play_game_menu);
-	main_menu.add_button(&button_high_scores, &high_scores_menu);
-	main_menu.add_button(&button_options, &options_menu);
+	play_game_menu.add_button("Back", &main_menu);
+	play_game_menu.add_button("Level 1", &blah);
+	play_game_menu.add_button("Level 2", &blah);
+	play_game_menu.add_button("Level 3", &blah);
+	play_game_menu.add_button("Next >>>", &play_game_menu);
 
-	play_game_menu.add_button(&button_back, &main_menu);
-	play_game_menu.add_button(&button_level1, &blah);
-	play_game_menu.add_button(&button_level2, &blah);
-	play_game_menu.add_button(&button_level3, &blah);
-	play_game_menu.add_button(&button_next, &play_game_menu);
+	options_menu.add_button("Back", &main_menu);
+	options_menu.add_button("Reset All Data", &blah);
 
-	options_menu.add_button(&button_back, &main_menu);
-	options_menu.add_button(&button_reset, &blah);
-
-	high_scores_menu.add_button(&button_back, &main_menu);
-	high_scores_menu.add_button(&button_wifi, &blah);
-	high_scores_menu.add_button(&button_local, &blah);
+	high_scores_menu.add_button("Back", &main_menu);
+	high_scores_menu.add_button("Online High Scores", &blah);
+	high_scores_menu.add_button("Local High Scores", &blah);
 
 	Menu *menu = &main_menu;
 

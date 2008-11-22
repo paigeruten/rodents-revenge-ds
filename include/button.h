@@ -18,6 +18,7 @@ const u8 BUTTON_PADDING = 6;
 class Button {
 	public:
 		// Constructors
+		Button();
 		Button(Canvas *the_canvas, Font *the_font, const char *the_text);
 		~Button();
 
@@ -35,6 +36,7 @@ class Button {
 		ButtonState get_state() const { return state; }
 
 		// Methods
+		void init(Canvas *the_canvas, Font *the_font, const char *the_text);
 		void draw() const;
 		ButtonState update(touchPosition stylus);
 		void center_x();

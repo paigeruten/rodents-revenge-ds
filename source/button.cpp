@@ -5,6 +5,23 @@
 #include "font.h"
 #include "button.h"
 
+Button::Button() {
+	canvas = 0;
+	font = 0;
+	text[0] = '\0';
+
+	ButtonColors default_colors;
+	default_colors.border = RGB(0, 0, 0);
+	default_colors.background = RGB(31, 31, 31);
+	default_colors.text = RGB(0, 0, 0);
+	set_colors(default_colors, default_colors);
+
+	x = 0;
+	y = 0;
+
+	state = BUTTON_NORMAL;
+}
+
 Button::Button(Canvas *the_canvas, Font *the_font, const char *the_text) {
 	canvas = the_canvas;
 	font = the_font;
@@ -33,6 +50,12 @@ Button::~Button() {
 void Button::set_text(const char *new_text) {
 	strncpy(text, new_text, sizeof(text));
 	center_text();
+}
+
+void Button::init(Canvas *the_canvas, Font *the_font, const char *the_text) {
+	canvas = the_canvas;
+	font = the_font;
+	set_text(the_text);
 }
 
 void Button::draw() const {

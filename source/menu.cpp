@@ -92,7 +92,10 @@ void Menu::arrange_buttons() {
 
 	for (u8 i = 0; i < MAX_BUTTONS; i++) {
 		if (buttons[i]) {
-			buttons[i]->set_position((canvas->get_width() - buttons[i]->get_width()) / 2, (i * button_space) + ((button_space - buttons[i]->get_height()) / 2));
+			u16 button_x = (canvas->get_width() - buttons[i]->get_width()) / 2; // center it horizontally
+			u16 button_y = (i * button_space) + ((button_space - buttons[i]->get_height()) / 2); // space them evenly
+
+			buttons[i]->set_position(button_x, button_y);
 		}
 	}
 }

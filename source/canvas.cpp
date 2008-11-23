@@ -1,4 +1,5 @@
 #include <nds.h>
+#include <string.h>
 #include "canvas.h"
 
 Canvas screen_top(SCREEN_WIDTH, SCREEN_HEIGHT, (Color *)BG_BMP_RAM(0));
@@ -76,15 +77,24 @@ void Canvas::copy(Canvas *destination, u32 x, u32 y) {
 		bottom_limit = destination->get_height();
 	}
 
-	u32 get_x = 0;
-	for (u32 put_x = x; put_x < right_limit; put_x++) {
-		u32 get_y = 0;
-		for (u32 put_y = y; put_y < bottom_limit; put_y++) {
-			destination->plot(put_x, put_y, get_pixel(get_x, get_y));
-			get_y++;
+	Color *dest_data = destination->get_data();
+	u16 dest_width = destination->get_width();
+
+	u32 get_x;
+	u32 put_x;
+	u32 get_y;
+	u32 put_y;
+
+	for (put_x = x, get_x = 0; put_x < right_limit; put_x++, get_x++) {
+		for (put_y = y, get_y = 0; put_y < bottom_limit; put_y++, get_y++) {
+			dest_data[put_x + put_y * dest_width] = data[get_x + get_y * width];
 		}
-		get_x++;
 	}
+}
+
+void Canvas::copy(Canvas *destination) {
+	DC_FlushAll();
+	dmaCopy(data, destination->get_data(), width * height * sizeof(data[0]));
 }
 
 void Canvas::clear(Color color) {

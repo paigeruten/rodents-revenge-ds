@@ -23,6 +23,7 @@ class Canvas {
 		void plot(u32 x, u32 y, Color color) { data[x + y * width] = color; }
 		void rect(u32 upper_left_x, u32 upper_left_y, u32 lower_right_x, u32 lower_right_y, Color color, bool filled);
 		void copy(Canvas *destination, u32 x, u32 y);
+		void copy(Canvas *destination);
 		void clear(Color color);
 
 	private:

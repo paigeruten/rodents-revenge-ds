@@ -70,13 +70,20 @@ Menu *Menu::select() {
 void Menu::draw() {
 	arrange_buttons();
 
-	canvas->clear(background_color);
+	Canvas buffer(SCREEN_WIDTH, SCREEN_HEIGHT);
+
+	buffer.clear(background_color);
 
 	for (u8 i = 0; i < MAX_BUTTONS; i++) {
 		if (buttons[i]) {
+			buttons[i]->set_canvas(&buffer);
 			buttons[i]->draw();
+			buttons[i]->set_canvas(canvas);
 		}
 	}
+
+	swiWaitForVBlank();
+	buffer.copy(canvas);
 }
 
 void Menu::add_button(const char *button_text, Menu *submenu) {

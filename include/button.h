@@ -23,6 +23,7 @@ class Button {
 		~Button();
 
 		// Accessors
+		void set_canvas(Canvas *new_canvas) { canvas = new_canvas; }
 		void set_text(const char *new_text);
 		const char *get_text() const { return text; }
 		void set_colors(ButtonColors normal, ButtonColors pressed) { colors[BUTTON_NORMAL] = normal; colors[BUTTON_PRESSED] = pressed; colors[BUTTON_CLICKED] = pressed; }

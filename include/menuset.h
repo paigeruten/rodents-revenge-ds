@@ -1,20 +1,23 @@
-#ifndef _menu_h
-#define _menu_h
+#ifndef _menuset_h
+#define _menuset_h
 
+#include "color.h"
 #include "canvas.h"
+#include "font.h"
+#include "menu.h"
 #include "button.h"
 
-const u8 MAX_BUTTONS = 10;
+const u8 MAX_MENUS = 32;
 
-class Menu {
+typedef u8 MenuId;
+
+class MenuSet {
 	public:
 		// Constructors
-		Menu();
-		Menu(Canvas *the_canvas, Font *the_font, Color background);
-		~Menu();
+		MenuSet(Canvas *the_canvas, Font *the_font, Color background);
+		~MenuSet();
 
 		// Accessors
-		void set_background_color(Color new_bgcolor) { background_color = new_bgcolor; }
 		void set_button_widths(u16 new_button_widths) { button_widths = new_button_widths; }
 		u16 get_button_widths() const { return button_widths; }
 		void set_button_heights(u16 new_button_heights) { button_heights = new_button_heights; }
@@ -22,28 +25,20 @@ class Menu {
 		void set_button_colors(ButtonColors colors, ButtonColors pressed_colors) { button_colors = colors; button_pressed_colors = pressed_colors; }
 
 		// Methods
-		void init(Canvas *the_canvas, Font *the_font, Color background);
-		Menu *select();
-		void draw();
-		void add_button(const char *button_text, Menu *submenu);
-		void add_button(const char *button_text, void (*action)());
+		void begin(MenuId top_menu);
+		MenuId add_menu();
+		void add_button(MenuId menu, const char *button_text, void (*action)());
+		void add_button(MenuId menu, const char *button_text, MenuId submenu);
 
 	private:
 		Canvas *canvas;
 		Font *font;
+		Menu *menus[MAX_MENUS];
 		Color background_color;
 		u16 button_widths;
 		u16 button_heights;
 		ButtonColors button_colors;
 		ButtonColors button_pressed_colors;
-
-		Button *buttons[MAX_BUTTONS];
-		Menu *submenus[MAX_BUTTONS];
-		void (*actions[MAX_BUTTONS])();
-
-		void add_button(const char *button_text, Menu *submenu, void (*action)());
-		void arrange_buttons();
-		u8 button_count() const;
 };
 
 #endif

@@ -7,6 +7,7 @@
 #include "tilemap.h"
 #include "button.h"
 #include "menu.h"
+#include "menuset.h"
 
 void init_screens(void) {
 	// Main screen turn on
@@ -29,6 +30,9 @@ void init_screens(void) {
 }
 
 void blah() {
+	static Color color = RGB(0, 0, 0);
+	screen_top.clear(color);
+	color = (~color) | BIT(15);
 }
 
 int main(void) {
@@ -51,57 +55,43 @@ int main(void) {
 	Font font("/data/rodents-revenge/fonts/sans.font");
 
 	// Test menus
-	Menu main_menu(&screen_bottom, &font, RGB(26, 26, 26));
-	Menu play_game_menu(&screen_bottom, &font, RGB(26, 26, 26));
-	Menu options_menu(&screen_bottom, &font, RGB(26, 26, 26));
-	Menu high_scores_menu(&screen_bottom, &font, RGB(26, 26, 26));
-
 	ButtonColors button_colors;
-	button_colors.border = RGB(3, 3, 3);
-	button_colors.background = RGB(20, 20, 20);
-	button_colors.text = RGB(15, 0, 0);
+	button_colors.border = RGB(2, 6, 10);
+	button_colors.background = RGB(2, 8, 14);
+	button_colors.text = RGB(27, 12, 0);
 
 	ButtonColors button_pressed_colors = button_colors;
-	button_pressed_colors.background = RGB(27, 27, 27);
+	button_pressed_colors.background = button_colors.text;
+	button_pressed_colors.text = button_colors.background;
 
-	main_menu.set_button_widths(SCREEN_WIDTH - 64);
-	main_menu.set_button_heights(32);
-	main_menu.set_button_colors(button_colors, button_pressed_colors);
+	MenuSet menu(&screen_bottom, &font, RGB(8, 14, 20));
+	menu.set_button_widths(SCREEN_WIDTH - 64);
+	menu.set_button_heights(32);
+	menu.set_button_colors(button_colors, button_pressed_colors);
 
-	play_game_menu.set_button_widths(SCREEN_WIDTH - 64);
-	play_game_menu.set_button_heights(32);
-	play_game_menu.set_button_colors(button_colors, button_pressed_colors);
+	MenuId MAIN_MENU = menu.add_menu();
+	MenuId PLAY_GAME_MENU = menu.add_menu();
+	MenuId OPTIONS_MENU = menu.add_menu();
+	MenuId HIGH_SCORES_MENU = menu.add_menu();
 
-	options_menu.set_button_widths(SCREEN_WIDTH - 64);
-	options_menu.set_button_heights(32);
-	options_menu.set_button_colors(button_colors, button_pressed_colors);
+	menu.add_button(MAIN_MENU, "Play Game", PLAY_GAME_MENU);
+	menu.add_button(MAIN_MENU, "High Scores", HIGH_SCORES_MENU);
+	menu.add_button(MAIN_MENU, "Options", OPTIONS_MENU);
 
-	high_scores_menu.set_button_widths(SCREEN_WIDTH - 64);
-	high_scores_menu.set_button_heights(32);
-	high_scores_menu.set_button_colors(button_colors, button_pressed_colors);
+	menu.add_button(PLAY_GAME_MENU, "Back", MAIN_MENU);
+	menu.add_button(PLAY_GAME_MENU, "Level 1", &blah);
+	menu.add_button(PLAY_GAME_MENU, "Level 2", &blah);
+	menu.add_button(PLAY_GAME_MENU, "Level 3", &blah);
+	menu.add_button(PLAY_GAME_MENU, "Next >>>", PLAY_GAME_MENU);
 
-	main_menu.add_button("Play Game", &play_game_menu);
-	main_menu.add_button("High Scores", &high_scores_menu);
-	main_menu.add_button("Options", &options_menu);
+	menu.add_button(OPTIONS_MENU, "Back", MAIN_MENU);
+	menu.add_button(OPTIONS_MENU, "Reset All Data", &blah);
 
-	play_game_menu.add_button("Back", &main_menu);
-	play_game_menu.add_button("Level 1", &blah);
-	play_game_menu.add_button("Level 2", &blah);
-	play_game_menu.add_button("Level 3", &blah);
-	play_game_menu.add_button("Next >>>", &play_game_menu);
+	menu.add_button(HIGH_SCORES_MENU, "Back", MAIN_MENU);
+	menu.add_button(HIGH_SCORES_MENU, "Online High Scores", &blah);
+	menu.add_button(HIGH_SCORES_MENU, "Local High Scores", &blah);
 
-	options_menu.add_button("Back", &main_menu);
-	options_menu.add_button("Reset All Data", &blah);
-
-	high_scores_menu.add_button("Back", &main_menu);
-	high_scores_menu.add_button("Online High Scores", &blah);
-	high_scores_menu.add_button("Local High Scores", &blah);
-
-	Menu *menu = &main_menu;
-
-	while (1) {
-		menu = menu->select();
-	}
+	menu.begin(MAIN_MENU);
 
 	return 0;
 }

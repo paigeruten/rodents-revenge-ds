@@ -3,6 +3,18 @@
 #include "button.h"
 #include "menu.h"
 
+Menu::Menu() {
+	canvas = 0;
+	font = 0;
+	background_color = RGB(31, 31, 31);;
+
+	for (u8 i = 0; i < MAX_BUTTONS; i++) {
+		buttons[i] = 0;
+		actions[i] = 0;
+		submenus[i] = 0;
+	}
+}
+
 Menu::Menu(Canvas *the_canvas, Font *the_font, Color background) {
 	canvas = the_canvas;
 	font = the_font;
@@ -22,6 +34,12 @@ Menu::~Menu() {
 			buttons[i] = 0;
 		}
 	}
+}
+
+void Menu::init(Canvas *the_canvas, Font *the_font, Color background) {
+	canvas = the_canvas;
+	font = the_font;
+	background_color = background;
 }
 
 Menu *Menu::select() {

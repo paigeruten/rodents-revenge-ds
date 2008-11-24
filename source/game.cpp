@@ -117,20 +117,23 @@ void Game::load_level() {
 void Game::play_level() {
 	map.draw(0, 0);
 
+	keysSetRepeat(20, 5);
+
 	while (lives) {
 		scanKeys();
+		u32 keys_down = keysDownRepeat();
 
-		if (keysDown() & (KEY_LEFT | KEY_RIGHT | KEY_UP | KEY_DOWN)) {
+		if (keys_down & (KEY_LEFT | KEY_RIGHT | KEY_UP | KEY_DOWN)) {
 			u8 new_mouse_x = mouse_x;
 			u8 new_mouse_y = mouse_y;
 
-			if (keysDown() & KEY_LEFT) {
+			if (keys_down & KEY_LEFT) {
 				new_mouse_x--;
-			} else if (keysDown() & KEY_RIGHT) {
+			} else if (keys_down & KEY_RIGHT) {
 				new_mouse_x++;
-			} else if (keysDown() & KEY_DOWN) {
+			} else if (keys_down & KEY_DOWN) {
 				new_mouse_y++;
-			} else if (keysDown() & KEY_UP) {
+			} else if (keys_down & KEY_UP) {
 				new_mouse_y--;
 			}
 

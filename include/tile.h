@@ -9,6 +9,7 @@ enum TileStatus { TILE_OK, TILE_NOT_LOADED, TILE_FILE_NOT_FOUND, TILE_INVALID_FI
 class Tile {
 	public:
 		// Constructors
+		Tile();
 		Tile(const char *filename);
 		~Tile();
 

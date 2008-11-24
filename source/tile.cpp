@@ -4,11 +4,17 @@
 #include "tile.h"
 #include "str.h"
 
-Tile::Tile(const char *filename) {
+Tile::Tile() {
 	data = 0;
 	width = 0;
 	height = 0;
 	status = TILE_NOT_LOADED;
+}
+
+Tile::Tile(const char *filename) {
+	data = 0;
+	width = 0;
+	height = 0;
 
 	status = load_from_file(filename);
 }

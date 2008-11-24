@@ -26,7 +26,7 @@ class Menu {
 		Menu *select();
 		void draw();
 		void add_button(const char *button_text, Menu *submenu);
-		void add_button(const char *button_text, void (*action)());
+		void add_button(const char *button_text, void (*action)(void *), void *data);
 
 	private:
 		Canvas *canvas;
@@ -39,9 +39,10 @@ class Menu {
 
 		Button *buttons[MAX_BUTTONS];
 		Menu *submenus[MAX_BUTTONS];
-		void (*actions[MAX_BUTTONS])();
+		void (*actions[MAX_BUTTONS])(void *);
+		void *actions_data[MAX_BUTTONS];
 
-		void add_button(const char *button_text, Menu *submenu, void (*action)());
+		void add_button(const char *button_text, Menu *submenu, void (*action)(void *), void *data);
 		void arrange_buttons();
 		u8 button_count() const;
 };

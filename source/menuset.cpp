@@ -44,8 +44,8 @@ MenuId MenuSet::add_menu() {
 	return 255;
 }
 
-void MenuSet::add_button(MenuId menu, const char *button_text, void (*action)()) {
-	menus[menu]->add_button(button_text, action);
+void MenuSet::add_button(MenuId menu, const char *button_text, void (*action)(void *), void *data) {
+	menus[menu]->add_button(button_text, action, data);
 }
 
 void MenuSet::add_button(MenuId menu, const char *button_text, MenuId submenu) {

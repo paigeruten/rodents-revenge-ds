@@ -11,6 +11,7 @@ const u8 MAX_TILES = 32;
 class TileMap {
 	public:
 		// Constructors
+		TileMap();
 		TileMap(Canvas *the_canvas, u8 the_width, u8 the_height, u8 the_tile_width, u8 the_tile_height);
 		~TileMap();
 
@@ -26,7 +27,8 @@ class TileMap {
 		void set_tile_height(u8 new_tile_height) { tile_height = new_tile_height; }
 
 		// Methods
-		TileNum add_tile(Tile *tile);
+		void init(Canvas *the_canvas, u8 the_width, u8 the_height, u8 the_tile_width, u8 the_tile_height);
+		void add_tile(Tile *tile, TileNum num);
 		void remove_tile(TileNum num);
 		void draw(u16 x, u16 y) const;
 

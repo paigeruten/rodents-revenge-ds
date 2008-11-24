@@ -3,7 +3,19 @@
 #include "tile.h"
 #include "tilemap.h"
 
+TileMap::TileMap() {
+}
+
 TileMap::TileMap(Canvas *the_canvas, u8 the_width, u8 the_height, u8 the_tile_width, u8 the_tile_height) {
+	init(the_canvas, the_width, the_height, the_tile_width, the_tile_height);
+}
+
+TileMap::~TileMap() {
+	delete [] map;
+	map = 0;
+}
+
+void TileMap::init(Canvas *the_canvas, u8 the_width, u8 the_height, u8 the_tile_width, u8 the_tile_height) {
 	canvas = the_canvas;
 	width = the_width;
 	height = the_height;
@@ -21,20 +33,8 @@ TileMap::TileMap(Canvas *the_canvas, u8 the_width, u8 the_height, u8 the_tile_wi
 	}
 }
 
-TileMap::~TileMap() {
-	delete [] map;
-	map = 0;
-}
-
-TileNum TileMap::add_tile(Tile *tile) {
-	for (u16 i = 0; i < MAX_TILES; i++) {
-		if (!tiles[i]) {
-			tiles[i] = tile;
-			return i;
-		}
-	}
-
-	return 0;
+void TileMap::add_tile(Tile *tile, TileNum num) {
+	tiles[num] = tile;
 }
 
 void TileMap::remove_tile(TileNum num) {

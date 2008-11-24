@@ -27,7 +27,7 @@ class MenuSet {
 		// Methods
 		void begin(MenuId top_menu);
 		MenuId add_menu();
-		void add_button(MenuId menu, const char *button_text, void (*action)());
+		void add_button(MenuId menu, const char *button_text, void (*action)(void *), void *data);
 		void add_button(MenuId menu, const char *button_text, MenuId submenu);
 
 	private:

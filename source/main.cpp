@@ -8,6 +8,7 @@
 #include "button.h"
 #include "menu.h"
 #include "menuset.h"
+#include "game.h"
 
 void init_screens(void) {
 	// Main screen turn on
@@ -29,10 +30,15 @@ void init_screens(void) {
 	BACKGROUND_SUB.bg3_rotation.ydy = 1 << 8;
 }
 
-void blah() {
+void blah(void *data) {
 	static Color color = RGB(0, 0, 0);
 	screen_top.clear(color);
 	color = (~color) | BIT(15);
+}
+
+void play_game(void *data) {
+	Game game(&screen_top, (Font *)data);
+	game.begin();
 }
 
 int main(void) {
@@ -79,17 +85,17 @@ int main(void) {
 	menu.add_button(MAIN_MENU, "Options", OPTIONS_MENU);
 
 	menu.add_button(PLAY_GAME_MENU, "Back", MAIN_MENU);
-	menu.add_button(PLAY_GAME_MENU, "Level 1", &blah);
-	menu.add_button(PLAY_GAME_MENU, "Level 2", &blah);
-	menu.add_button(PLAY_GAME_MENU, "Level 3", &blah);
+	menu.add_button(PLAY_GAME_MENU, "Level 1", &play_game, (void *)&font);
+	menu.add_button(PLAY_GAME_MENU, "Level 2", &blah, 0);
+	menu.add_button(PLAY_GAME_MENU, "Level 3", &blah, 0);
 	menu.add_button(PLAY_GAME_MENU, "Next >>>", PLAY_GAME_MENU);
 
 	menu.add_button(OPTIONS_MENU, "Back", MAIN_MENU);
-	menu.add_button(OPTIONS_MENU, "Reset All Data", &blah);
+	menu.add_button(OPTIONS_MENU, "Reset All Data", &blah, 0);
 
 	menu.add_button(HIGH_SCORES_MENU, "Back", MAIN_MENU);
-	menu.add_button(HIGH_SCORES_MENU, "Online High Scores", &blah);
-	menu.add_button(HIGH_SCORES_MENU, "Local High Scores", &blah);
+	menu.add_button(HIGH_SCORES_MENU, "Online High Scores", &blah, 0);
+	menu.add_button(HIGH_SCORES_MENU, "Local High Scores", &blah, 0);
 
 	menu.begin(MAIN_MENU);
 

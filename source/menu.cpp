@@ -23,6 +23,7 @@ Menu::Menu(Canvas *the_canvas, Font *the_font, Color background) {
 	for (u8 i = 0; i < MAX_BUTTONS; i++) {
 		buttons[i] = 0;
 		actions[i] = 0;
+		actions_data[i] = 0;
 		submenus[i] = 0;
 	}
 }
@@ -57,7 +58,8 @@ Menu *Menu::select() {
 					}
 
 					if (actions[i]) {
-						(*actions[i])();
+						(*actions[i])(actions_data[i]);
+						draw();
 					}
 				}
 			}
@@ -87,14 +89,14 @@ void Menu::draw() {
 }
 
 void Menu::add_button(const char *button_text, Menu *submenu) {
-	add_button(button_text, submenu, 0);
+	add_button(button_text, submenu, 0, 0);
 }
 
-void Menu::add_button(const char *button_text, void (*action)()) {
-	add_button(button_text, 0, action);
+void Menu::add_button(const char *button_text, void (*action)(void *), void *data) {
+	add_button(button_text, 0, action, data);
 }
 
-void Menu::add_button(const char *button_text, Menu *submenu, void (*action)()) {
+void Menu::add_button(const char *button_text, Menu *submenu, void (*action)(void *), void *data) {
 	for (u8 i = 0; i < MAX_BUTTONS; i++) {
 		if (!buttons[i]) {
 			// Create button
@@ -105,6 +107,7 @@ void Menu::add_button(const char *button_text, Menu *submenu, void (*action)()) 
 			buttons[i]->set_height(button_heights);
 
 			actions[i] = action;
+			actions_data[i] = data;
 			submenus[i] = submenu;
 			break;
 		}

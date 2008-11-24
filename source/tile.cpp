@@ -27,10 +27,6 @@ Tile::~Tile() {
 }
 
 void Tile::draw(Canvas *canvas, u32 x, u32 y) {
-	if (!data) {
-		return;
-	}
-
 	u32 get_x, get_y;
 
 	get_x = 0;

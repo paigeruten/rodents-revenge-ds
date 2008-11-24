@@ -24,6 +24,7 @@ Game::Game(Canvas *the_canvas, Font *the_font) {
 	tiles[6].load_from_file("/data/rodents-revenge/tiles/trap.tile");
 	tiles[7].load_from_file("/data/rodents-revenge/tiles/sinkhole.tile");
 	tiles[8].load_from_file("/data/rodents-revenge/tiles/cheese.tile");
+	tiles[9].load_from_file("/data/rodents-revenge/tiles/mouse_sinkhole.tile");
 
 	map.add_tile(&tiles[0], TILE_EMPTY);
 	map.add_tile(&tiles[1], TILE_MOVABLE_BLOCK);
@@ -34,6 +35,7 @@ Game::Game(Canvas *the_canvas, Font *the_font) {
 	map.add_tile(&tiles[6], TILE_MOUSE_TRAP);
 	map.add_tile(&tiles[7], TILE_SINK_HOLE);
 	map.add_tile(&tiles[8], TILE_CHEESE);
+	map.add_tile(&tiles[9], TILE_MOUSE_SINKHOLE);
 }
 
 Game::~Game() {
@@ -43,6 +45,7 @@ u32 Game::begin() {
 	lives = NUM_LIVES;
 	level = options.get_start_level();
 	score = 0;
+	state = STATE_NORMAL;
 
 	while (lives) {
 		load_level();
@@ -152,7 +155,17 @@ void Game::play_level() {
 					break;
 
 				case TILE_SINK_HOLE:
-					// TODO
+					// TODO: Use clock ticks to keep mouse in sinkhole for
+					// a certain amount of time.
+
+					map.set_tile(mouse_x, mouse_y, TILE_EMPTY);
+					map.set_tile(new_mouse_x, new_mouse_y, TILE_MOUSE_SINKHOLE);
+
+					map.draw(0, 0);
+
+					mouse_x = new_mouse_x;
+					mouse_y = new_mouse_y;
+					state = STATE_SINKHOLE;
 					break;
 
 				case TILE_CAT:

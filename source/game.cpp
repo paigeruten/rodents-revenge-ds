@@ -25,6 +25,9 @@ Game::Game(Canvas *the_canvas, Font *the_font) {
 	tiles[7].load_from_file("/data/rodents-revenge/tiles/sinkhole.tile");
 	tiles[8].load_from_file("/data/rodents-revenge/tiles/cheese.tile");
 	tiles[9].load_from_file("/data/rodents-revenge/tiles/mouse_sinkhole.tile");
+	tiles[10].load_from_file("/data/rodents-revenge/tiles/border_opening_vertical.tile");
+	tiles[11].load_from_file("/data/rodents-revenge/tiles/border_opening_horizontal.tile");
+
 
 	map.add_tile(&tiles[0], TILE_EMPTY);
 	map.add_tile(&tiles[1], TILE_MOVABLE_BLOCK);
@@ -36,6 +39,8 @@ Game::Game(Canvas *the_canvas, Font *the_font) {
 	map.add_tile(&tiles[7], TILE_SINK_HOLE);
 	map.add_tile(&tiles[8], TILE_CHEESE);
 	map.add_tile(&tiles[9], TILE_MOUSE_SINKHOLE);
+	map.add_tile(&tiles[10], TILE_BORDER_OPENING_VERTICAL);
+	map.add_tile(&tiles[11], TILE_BORDER_OPENING_HORIZONTAL);
 }
 
 Game::~Game() {

@@ -6,7 +6,7 @@
 #include "tile.h"
 #include "tilemap.h"
 
-const u8 NUM_TILES = 10;
+const u8 NUM_TILES = 12;
 
 const u8 LEVEL_WIDTH = 21;
 const u8 LEVEL_HEIGHT = 16;
@@ -26,7 +26,9 @@ enum {
 	TILE_MOUSE_TRAP,
 	TILE_SINK_HOLE,
 	TILE_CHEESE,
-	TILE_MOUSE_SINKHOLE
+	TILE_MOUSE_SINKHOLE,
+	TILE_BORDER_OPENING_VERTICAL,
+	TILE_BORDER_OPENING_HORIZONTAL
 };
 
 enum PlayerState { STATE_NORMAL, STATE_SINKHOLE };

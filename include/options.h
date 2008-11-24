@@ -1,7 +1,13 @@
 #ifndef _options_h
 #define _options_h
 
-enum GameSpeed { SPEED_SNAIL, SPEED_SLOW, SPEED_MEDIUM, SPEED_FAST, SPEED_BLAZING };
+enum GameSpeed {
+	SPEED_SNAIL = 120,
+	SPEED_SLOW = 60,
+	SPEED_MEDIUM = 30,
+	SPEED_FAST = 18,
+	SPEED_BLAZING = 12
+};
 
 const u8 DEFAULT_START_LEVEL = 1;
 const GameSpeed DEFAULT_SPEED = SPEED_SLOW;

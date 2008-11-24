@@ -53,6 +53,7 @@ class Game {
 		u8 level;
 		u32 score;
 		PlayerState state;
+		u32 time_stuck_in_sinkhole;
 
 		void load_level();
 		void play_level();

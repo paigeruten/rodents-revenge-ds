@@ -7,6 +7,7 @@
 #include "str.h"
 #include "tile.h"
 #include "tilemap.h"
+#include "clock.h"
 #include "game.h"
 
 Game::Game(Canvas *the_canvas, Font *the_font) {
@@ -120,7 +121,10 @@ void Game::load_level() {
 }
 
 void Game::play_level() {
+	Clock clock(&screen_bottom, (SCREEN_WIDTH - CLOCK_WIDTH) / 2, 10);
+
 	map.draw(0, 0);
+	screen_bottom.clear(RGB(23, 23, 23));
 
 	keysSetRepeat(20, 5);
 
@@ -128,66 +132,77 @@ void Game::play_level() {
 		scanKeys();
 		u32 keys_down = keysDownRepeat();
 
-		if (keys_down & (KEY_LEFT | KEY_RIGHT | KEY_UP | KEY_DOWN)) {
-			u8 new_mouse_x = mouse_x;
-			u8 new_mouse_y = mouse_y;
+		if (state == STATE_SINKHOLE) {
+			s32 length_of_time_in_hole = clock.get_tick() - time_stuck_in_sinkhole;
 
-			if (keys_down & KEY_LEFT) {
-				new_mouse_x--;
-			} else if (keys_down & KEY_RIGHT) {
-				new_mouse_x++;
-			} else if (keys_down & KEY_DOWN) {
-				new_mouse_y++;
-			} else if (keys_down & KEY_UP) {
-				new_mouse_y--;
+			if (length_of_time_in_hole > options.get_speed() * 5) {
+				state = STATE_NORMAL;
+				map.set_tile(mouse_x, mouse_y, TILE_MOUSE);
+				map.draw(0, 0);
 			}
+		} else {
+			if (keys_down & (KEY_LEFT | KEY_RIGHT | KEY_UP | KEY_DOWN)) {
+				u8 new_mouse_x = mouse_x;
+				u8 new_mouse_y = mouse_y;
 
-			TileNum new_tile = map.get_tile(new_mouse_x, new_mouse_y);
+				if (keys_down & KEY_LEFT) {
+					new_mouse_x--;
+				} else if (keys_down & KEY_RIGHT) {
+					new_mouse_x++;
+				} else if (keys_down & KEY_DOWN) {
+					new_mouse_y++;
+				} else if (keys_down & KEY_UP) {
+					new_mouse_y--;
+				}
 
-			switch (new_tile) {
-				case TILE_CHEESE:
-					score += 100;
-					move_mouse(new_mouse_x, new_mouse_y);
-					break;
+				TileNum new_tile = map.get_tile(new_mouse_x, new_mouse_y);
 
-				case TILE_EMPTY:
-					move_mouse(new_mouse_x, new_mouse_y);
-					break;
+				switch (new_tile) {
+					case TILE_CHEESE:
+						score += 100;
+						move_mouse(new_mouse_x, new_mouse_y);
+						break;
 
-				case TILE_STATIONARY_BLOCK:
-					// Can't move here
-					break;
+					case TILE_EMPTY:
+						move_mouse(new_mouse_x, new_mouse_y);
+						break;
 
-				case TILE_MOVABLE_BLOCK:
-					push_block(new_mouse_x, new_mouse_y);
-					break;
+					case TILE_STATIONARY_BLOCK:
+						// Can't move here
+						break;
 
-				case TILE_SINK_HOLE:
-					// TODO: Use clock ticks to keep mouse in sinkhole for
-					// a certain amount of time.
+					case TILE_MOVABLE_BLOCK:
+						push_block(new_mouse_x, new_mouse_y);
+						break;
 
-					map.set_tile(mouse_x, mouse_y, TILE_EMPTY);
-					map.set_tile(new_mouse_x, new_mouse_y, TILE_MOUSE_SINKHOLE);
+					case TILE_SINK_HOLE:
+						map.set_tile(mouse_x, mouse_y, TILE_EMPTY);
+						map.set_tile(new_mouse_x, new_mouse_y, TILE_MOUSE_SINKHOLE);
 
-					map.draw(0, 0);
+						map.draw(0, 0);
 
-					mouse_x = new_mouse_x;
-					mouse_y = new_mouse_y;
-					state = STATE_SINKHOLE;
-					break;
+						mouse_x = new_mouse_x;
+						mouse_y = new_mouse_y;
 
-				case TILE_CAT:
-				case TILE_YARN:
-				case TILE_MOUSE_TRAP:
-					// TODO: Kill the mouse here.
-					lives--;
-					break;
+						time_stuck_in_sinkhole = clock.get_tick();
+						state = STATE_SINKHOLE;
+						break;
 
-				default:
-					// This shouldn't happen.
-					break;
-			}		
+					case TILE_CAT:
+					case TILE_YARN:
+					case TILE_MOUSE_TRAP:
+						// TODO: Kill the mouse here.
+						lives--;
+						break;
+
+					default:
+						// This shouldn't happen.
+						break;
+				}		
+			}
 		}
+
+		clock.update();
 
 		swiWaitForVBlank();
 	}

@@ -1,8 +1,11 @@
 #include <nds.h>
+#include <math.h>
 #include "color.h"
 #include "canvas.h"
 #include "options.h"
 #include "clock.h"
+
+const float PI = 3.14159;
 
 const Color clock_colors[] = {
 	RGB(23, 23, 23), // 0: light grey
@@ -67,7 +70,7 @@ Clock::~Clock() {
 void Clock::update() {
 	tick++;
 
-	if (tick % options.get_speed()) {
+	if (tick % options.get_speed() == 0) {
 		second++;
 
 		if (second == 30) {
@@ -94,12 +97,19 @@ void Clock::update() {
 void Clock::draw() {
 	for (u8 put_x = 0; put_x < CLOCK_WIDTH; put_x++) {
 		for (u8 put_y = 0; put_y < CLOCK_HEIGHT; put_y++) {
-			canvas->plot(x + put_x, y + put_y, clock_data[put_x + put_y * CLOCK_WIDTH]);
+			canvas->plot(x + put_x, y + put_y, clock_colors[clock_data[put_x + put_y * CLOCK_WIDTH]]);
 		}
 	}
+
+	u32 clock_center_x = x + (CLOCK_WIDTH / 2);
+	u32 clock_center_y = y + (CLOCK_HEIGHT / 2);
+
+	canvas->line(clock_center_x, clock_center_y, clock_center_x + sin(second * 12 * PI / 180.0) * 9.0, clock_center_y - cos(second * 12 * PI / 180.0) * 9.0, RGB(31, 0, 0));
+	canvas->line(clock_center_x, clock_center_y, clock_center_x + sin(minute * 12 * PI / 180.0) * 9.0, clock_center_y - cos(minute * 12 * PI / 180.0) * 9.0, RGB(0, 0, 15));
+	canvas->line(clock_center_x, clock_center_y, clock_center_x + sin(blue_line * 12 * PI / 180.0) * 5.0, clock_center_y - cos(blue_line * 12 * PI / 180.0) * 5.0, RGB(0, 0, 31));
 }
 
 void Clock::update_blue_line() {
-	blue_line = (blue_line + 5) % 30;
+	blue_line = (blue_line + 6) % 30;
 }
 

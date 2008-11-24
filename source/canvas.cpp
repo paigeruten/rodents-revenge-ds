@@ -103,3 +103,56 @@ void Canvas::clear(Color color) {
 	}
 }
 
+void Canvas::line(u32 x1, u32 y1, u32 x2, u32 y2, Color color) {	
+	s32 dx = x1 - x2;
+	s32 dy = y1 - y2;
+	s32 dxabs = dx;
+	s32 sdx = 1;
+	
+	if (dx < 0) {
+		dxabs = -dx;
+		sdx = -1;
+	}
+
+	s32 dyabs = dy;
+	s32 sdy = 1;
+	
+	if (dy < 0) {
+		dyabs = -dy;
+		sdy = -1;
+	}
+
+	s32 x = dyabs / 2;
+	s32 y = dxabs / 2;
+	s32 px = x2;
+	s32 py = y2;
+
+	plot(px, py, color);
+
+	if (dxabs >= dyabs) {
+		for (s32 i = 0; i < dxabs; i++) {
+			y += dyabs;
+			
+			if (y >= dxabs) {
+				y -= dxabs;
+				py += sdy;
+			}
+			
+			px += sdx;
+			plot(px, py, color);
+		}
+	} else {
+		for (s32 i = 0; i < dyabs; i++) {
+			x += dxabs;
+			
+			if (x >= dyabs) {
+				x -= dyabs;
+				px += sdx;
+			}
+
+			py += sdy;
+			plot(px, py, color);
+		}
+	}
+}
+

@@ -24,6 +24,9 @@ class Clock {
 		void set_x(u16 new_x) { x = new_x; }
 		void set_y(u16 new_y) { y = new_y; }
 		ClockState get_state() const { return state; }
+		bool get_reached_blue_line() const { return reached_blue_line; }
+		bool get_second_tick() const { return second_tick; }
+		bool get_minute_tick() const { return minute_tick; }
 
 		// Methods
 		void update();
@@ -38,6 +41,9 @@ class Clock {
 		u8 blue_line;
 		u32 tick;
 		ClockState state;
+		bool reached_blue_line;
+		bool second_tick;
+		bool minute_tick;
 
 		void update_blue_line();
 };

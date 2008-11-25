@@ -1,5 +1,6 @@
 #include <nds.h>
 #include <math.h>
+#include <stdlib.h>
 #include "color.h"
 #include "canvas.h"
 #include "options.h"
@@ -61,6 +62,10 @@ Clock::Clock(Canvas *the_canvas, u16 the_x, u16 the_y) {
 	tick = 0;
 	state = CLOCK_STARTED;
 
+	second_tick = false;
+	minute_tick = false;
+	reached_blue_line = false;
+
 	update_blue_line();
 }
 
@@ -70,22 +75,30 @@ Clock::~Clock() {
 void Clock::update() {
 	tick++;
 
+	second_tick = false;
+	minute_tick = false;
+	reached_blue_line = false;
+
 	if (tick % options.get_speed() == 0) {
 		second++;
+		second_tick = true;
 
 		if (second == 30) {
 			second = 0;
 
+			srand(tick);
+
 			if (state == CLOCK_STARTED) {
 				minute++;
+				minute_tick = true;
 
 				if (minute == 30) {
 					state = CLOCK_STOPPED;
 				}
 
 				if (minute == blue_line) {
-					// TODO: spawn cats here somehow
 					update_blue_line();
+					reached_blue_line = true;
 				}
 			}
 		}

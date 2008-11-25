@@ -10,7 +10,7 @@ enum GameSpeed {
 };
 
 const u8 DEFAULT_START_LEVEL = 1;
-const GameSpeed DEFAULT_SPEED = SPEED_SLOW;
+const GameSpeed DEFAULT_SPEED = SPEED_FAST;
 
 class Options {
 	public:

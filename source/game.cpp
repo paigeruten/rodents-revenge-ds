@@ -1,6 +1,7 @@
 #include <nds.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "canvas.h"
 #include "font.h"
 #include "options.h"
@@ -16,6 +17,11 @@ Game::Game(Canvas *the_canvas, Font *the_font) {
 
 	map.init(canvas, LEVEL_WIDTH, LEVEL_HEIGHT, TILE_WIDTH, TILE_HEIGHT);
 
+	for (u8 i = 0; i < MAX_CATS; i++) {
+		cats_x[i] = 0;
+		cats_y[i] = 0;
+	}
+
 	tiles[0].load_from_file("/data/rodents-revenge/tiles/empty.tile");
 	tiles[1].load_from_file("/data/rodents-revenge/tiles/movable_block.tile");
 	tiles[2].load_from_file("/data/rodents-revenge/tiles/stationary_block.tile");
@@ -28,7 +34,6 @@ Game::Game(Canvas *the_canvas, Font *the_font) {
 	tiles[9].load_from_file("/data/rodents-revenge/tiles/mouse_sinkhole.tile");
 	tiles[10].load_from_file("/data/rodents-revenge/tiles/border_opening_vertical.tile");
 	tiles[11].load_from_file("/data/rodents-revenge/tiles/border_opening_horizontal.tile");
-
 
 	map.add_tile(&tiles[0], TILE_EMPTY);
 	map.add_tile(&tiles[1], TILE_MOVABLE_BLOCK);
@@ -123,10 +128,14 @@ void Game::load_level() {
 void Game::play_level() {
 	Clock clock(&screen_bottom, (SCREEN_WIDTH - CLOCK_WIDTH) / 2, 10);
 
-	map.draw(0, 0);
+	screen_bottom.clear(RGB(23, 23, 23));
 	screen_bottom.clear(RGB(23, 23, 23));
 
+	clock.draw();
+
 	keysSetRepeat(20, 5);
+
+	spawn_cats();
 
 	while (lives) {
 		scanKeys();
@@ -138,7 +147,6 @@ void Game::play_level() {
 			if (length_of_time_in_hole > options.get_speed() * 5) {
 				state = STATE_NORMAL;
 				map.set_tile(mouse_x, mouse_y, TILE_MOUSE);
-				map.draw(0, 0);
 			}
 		} else {
 			if (keys_down & (KEY_LEFT | KEY_RIGHT | KEY_UP | KEY_DOWN)) {
@@ -179,8 +187,6 @@ void Game::play_level() {
 						map.set_tile(mouse_x, mouse_y, TILE_EMPTY);
 						map.set_tile(new_mouse_x, new_mouse_y, TILE_MOUSE_SINKHOLE);
 
-						map.draw(0, 0);
-
 						mouse_x = new_mouse_x;
 						mouse_y = new_mouse_y;
 
@@ -201,6 +207,12 @@ void Game::play_level() {
 				}		
 			}
 		}
+
+		if (clock.get_reached_blue_line()) {
+			spawn_cats();
+		}
+
+		map.draw(36, 4);
 
 		clock.update();
 
@@ -247,9 +259,44 @@ void Game::move_mouse(u8 x, u8 y) {
 	map.set_tile(mouse_x, mouse_y, TILE_EMPTY);
 	map.set_tile(x, y, TILE_MOUSE);
 
-	map.draw(0, 0);
-
 	mouse_x = x;
 	mouse_y = y;
 }
 
+void Game::spawn_cats() {
+	spawn_single_cat();
+
+	if (rand() & 1) {
+		spawn_single_cat();
+	}
+}
+
+void Game::spawn_single_cat() {
+	// Find all possible positions to place the cat (in other words find all empty tiles)
+	u8 empty_tiles_x[512];
+	u8 empty_tiles_y[512];
+	u8 num_empty_tiles = 0;
+
+	for (u8 tile_x = 0; tile_x < LEVEL_WIDTH; tile_x++) {
+		for (u8 tile_y = 0; tile_y < LEVEL_HEIGHT; tile_y++) {
+			if (map.get_tile(tile_x, tile_y) == TILE_EMPTY) {
+				empty_tiles_x[num_empty_tiles] = tile_x;
+				empty_tiles_y[num_empty_tiles] = tile_y;
+				num_empty_tiles++;
+			}
+		}
+	}
+
+	u16 random_tile = rand() % num_empty_tiles;
+
+	map.set_tile(empty_tiles_x[random_tile], empty_tiles_y[random_tile], TILE_CAT);
+
+	// Record cat's position in cats_x[] and cats_y[]
+	for (u8 i = 0; i < MAX_CATS; i++) {
+		if (!cats_x[i] && !cats_y[i]) {
+			cats_x[i] = empty_tiles_x[random_tile];
+			cats_y[i] = empty_tiles_y[random_tile];
+			break;
+		}
+	}
+}

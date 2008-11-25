@@ -16,6 +16,8 @@ const u8 TILE_HEIGHT = 8;
 
 const u8 NUM_LIVES = 3;
 
+const u8 MAX_CATS = 32;
+
 enum {
 	TILE_EMPTY,
 	TILE_MOVABLE_BLOCK,
@@ -54,11 +56,15 @@ class Game {
 		u32 score;
 		PlayerState state;
 		u32 time_stuck_in_sinkhole;
+		u8 cats_x[MAX_CATS];
+		u8 cats_y[MAX_CATS];
 
 		void load_level();
 		void play_level();
 		void push_block(u8 x, u8 y);
 		void move_mouse(u8 x, u8 y);
+		void spawn_cats();
+		void spawn_single_cat();
 };
 
 #endif

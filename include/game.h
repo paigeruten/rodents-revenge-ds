@@ -8,11 +8,11 @@
 
 const u8 NUM_TILES = 12;
 
-const u8 LEVEL_WIDTH = 21;
-const u8 LEVEL_HEIGHT = 16;
+const u8 LEVEL_WIDTH = 23;
+const u8 LEVEL_HEIGHT = 23;
 
-const u8 TILE_WIDTH = 12;
-const u8 TILE_HEIGHT = 12;
+const u8 TILE_WIDTH = 8;
+const u8 TILE_HEIGHT = 8;
 
 const u8 NUM_LIVES = 3;
 

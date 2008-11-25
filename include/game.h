@@ -33,7 +33,20 @@ enum {
 	TILE_BORDER_OPENING_HORIZONTAL
 };
 
-enum PlayerState { STATE_NORMAL, STATE_SINKHOLE };
+const u8 NUM_DIRECTIONS = 8;
+
+enum Direction {
+	DIRECTION_NORTH,
+	DIRECTION_NORTHEAST,
+	DIRECTION_EAST,
+	DIRECTION_SOUTHEAST,
+	DIRECTION_SOUTH,
+	DIRECTION_SOUTHWEST,
+	DIRECTION_WEST,
+	DIRECTION_NORTHWEST
+};
+
+enum PlayerState { STATE_NORMAL, STATE_SINKHOLE, STATE_DYING };
 
 class Game {
 	public:
@@ -65,6 +78,7 @@ class Game {
 		void move_mouse(u8 x, u8 y);
 		void spawn_cats();
 		void spawn_single_cat();
+		void move_cat(u8 cat_num);
 };
 
 #endif

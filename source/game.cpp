@@ -208,6 +208,14 @@ void Game::play_level() {
 			}
 		}
 
+		if (clock.get_second_tick()) {
+			for (u8 i = 0; i < MAX_CATS; i++) {
+				if (cats_x[i] || cats_y[i]) {
+					move_cat(i);
+				}
+			}
+		}
+
 		if (clock.get_reached_blue_line()) {
 			spawn_cats();
 		}
@@ -299,4 +307,86 @@ void Game::spawn_single_cat() {
 			break;
 		}
 	}
+}
+
+void Game::move_cat(u8 cat_num) {
+	u8 x = cats_x[cat_num];
+	u8 y = cats_y[cat_num];	
+
+	// Get the cat's possible new positions for each of the 8 directions
+	u8 new_x[NUM_DIRECTIONS];
+	new_x[DIRECTION_NORTH] = x;
+	new_x[DIRECTION_SOUTH] = x;
+	new_x[DIRECTION_WEST] = x - 1;
+	new_x[DIRECTION_EAST] = x + 1;
+	new_x[DIRECTION_NORTHWEST] = x - 1;
+	new_x[DIRECTION_NORTHEAST] = x + 1;
+	new_x[DIRECTION_SOUTHWEST] = x - 1;
+	new_x[DIRECTION_SOUTHEAST] = x + 1;
+
+	u8 new_y[NUM_DIRECTIONS];
+	new_y[DIRECTION_NORTH] = y - 1;
+	new_y[DIRECTION_SOUTH] = y + 1;
+	new_y[DIRECTION_WEST] = y;
+	new_y[DIRECTION_EAST] = y;
+	new_y[DIRECTION_NORTHWEST] = y - 1;
+	new_y[DIRECTION_NORTHEAST] = y - 1;
+	new_y[DIRECTION_SOUTHWEST] = y + 1;
+	new_y[DIRECTION_SOUTHEAST] = y + 1;
+
+	// For each of the 8 directions, calculate the distance from the mouse to
+	// the cat if the cat were to move in that direction.
+	s16 distance[NUM_DIRECTIONS];
+	for (u8 i = 0; i < NUM_DIRECTIONS; i++) {
+		distance[i] = map.distance(new_x[i], new_y[i], mouse_x, mouse_y);
+	}
+
+	bool done = false;
+	while (!done) {
+		// Find the direction with the minimum distance.
+		s16 min_distance = 255;
+		Direction min_direction = DIRECTION_NORTH;
+		bool can_move = false;
+		for (u8 i = 0; i < NUM_DIRECTIONS; i++) {
+			if (distance[i] < min_distance && distance[i] != -1) {
+				min_distance = distance[i];
+				min_direction = (Direction)i;
+			}
+
+			if (distance[i] != -1) {
+				can_move = true;
+			}
+		}
+
+		if (!can_move) {
+			// TODO: make cat curl up or turn into a piece of cheese here.
+			// For now just turn it into a piece of cheese.
+			map.set_tile(x, y, TILE_CHEESE);
+			cats_x[cat_num] = 0;
+			cats_y[cat_num] = 0;
+
+			done = true;
+		} else {
+			TileNum the_tile = map.get_tile(new_x[min_direction], new_y[min_direction]);
+
+			switch (the_tile) {
+				case TILE_MOUSE:
+					state = STATE_DYING;
+				case TILE_EMPTY:
+					map.set_tile(new_x[min_direction], new_y[min_direction], TILE_CAT);
+					map.set_tile(x, y, TILE_EMPTY);
+
+					cats_x[cat_num] = new_x[min_direction];
+					cats_y[cat_num] = new_y[min_direction];
+
+					done = true;
+					break;
+
+				default:
+					distance[min_direction] = -1;
+			}
+		}
+	}
+
+	
 }

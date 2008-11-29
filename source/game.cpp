@@ -22,6 +22,9 @@ Game::Game(Canvas *the_canvas, Font *the_font) {
 		cats_y[i] = 0;
 	}
 
+	// This tile is used to display the number of lives
+	big_mouse_tile.load_from_file("/data/rodents-revenge/tiles/mouse_big.tile");
+
 	tiles[0].load_from_file("/data/rodents-revenge/tiles/empty.tile");
 	tiles[1].load_from_file("/data/rodents-revenge/tiles/movable_block.tile");
 	tiles[2].load_from_file("/data/rodents-revenge/tiles/stationary_block.tile");
@@ -126,22 +129,43 @@ void Game::load_level() {
 }
 
 void Game::play_level() {
-	Clock clock(&screen_bottom, (SCREEN_WIDTH - CLOCK_WIDTH) / 2, 10);
+	screen_top.clear(RGB(23, 23, 23));
+	screen_bottom.clear(RGB(23, 23, 23));
 
-	screen_bottom.clear(RGB(23, 23, 23));
-	screen_bottom.clear(RGB(23, 23, 23));
+	Clock clock(&screen_bottom, (SCREEN_WIDTH - CLOCK_WIDTH) / 2, 10);
 
 	clock.draw();
 
-	keysSetRepeat(20, 5);
-
 	spawn_cats();
+
+	update_lives();
+	update_score();
+
+	keysSetRepeat(15, 3);
 
 	while (lives) {
 		scanKeys();
 		u32 keys_down = keysDownRepeat();
 
-		if (state == STATE_SINKHOLE) {
+		if (state == STATE_DYING) {
+			u8 random_x;
+			u8 random_y;
+
+			state = STATE_NORMAL;
+
+			// TODO: Play animation of mouse dying here.
+
+			random_empty_tile(&random_x, &random_y);
+
+			mouse_x = random_x;
+			mouse_y = random_y;
+
+			map.set_tile(mouse_x, mouse_y, TILE_MOUSE);
+
+			lives--;
+
+			update_lives();
+		} else if (state == STATE_SINKHOLE) {
 			s32 length_of_time_in_hole = clock.get_tick() - time_stuck_in_sinkhole;
 
 			if (length_of_time_in_hole > options.get_speed() * 5) {
@@ -175,10 +199,6 @@ void Game::play_level() {
 						move_mouse(new_mouse_x, new_mouse_y);
 						break;
 
-					case TILE_STATIONARY_BLOCK:
-						// Can't move here
-						break;
-
 					case TILE_MOVABLE_BLOCK:
 						push_block(new_mouse_x, new_mouse_y);
 						break;
@@ -194,15 +214,12 @@ void Game::play_level() {
 						state = STATE_SINKHOLE;
 						break;
 
-					case TILE_CAT:
-					case TILE_YARN:
 					case TILE_MOUSE_TRAP:
-						// TODO: Kill the mouse here.
-						lives--;
+						state = STATE_DYING;
 						break;
 
 					default:
-						// This shouldn't happen.
+						// All other tiles cannot be moved upon.
 						break;
 				}		
 			}
@@ -291,13 +308,35 @@ void Game::move_mouse(u8 x, u8 y) {
 void Game::spawn_cats() {
 	spawn_single_cat();
 
-	if (rand() & 1) {
+	if (rand() <= RAND_MAX / 3) {
+		spawn_single_cat();
+	}
+
+	if (rand() <= RAND_MAX / 3) {
 		spawn_single_cat();
 	}
 }
 
 void Game::spawn_single_cat() {
-	// Find all possible positions to place the cat (in other words find all empty tiles)
+	u8 random_x;
+	u8 random_y;
+
+	random_empty_tile(&random_x, &random_y);
+
+	map.set_tile(random_x, random_y, TILE_CAT);
+
+	// Record cat's position in cats_x[] and cats_y[]
+	for (u8 i = 0; i < MAX_CATS; i++) {
+		if (!cats_x[i] && !cats_y[i]) {
+			cats_x[i] = random_x;
+			cats_y[i] = random_y;
+			break;
+		}
+	}
+}
+
+void Game::random_empty_tile(u8 *x, u8 *y) {
+	// Find all possible empty tiles
 	u8 empty_tiles_x[512];
 	u8 empty_tiles_y[512];
 	u8 num_empty_tiles = 0;
@@ -314,16 +353,8 @@ void Game::spawn_single_cat() {
 
 	u16 random_tile = rand() % num_empty_tiles;
 
-	map.set_tile(empty_tiles_x[random_tile], empty_tiles_y[random_tile], TILE_CAT);
-
-	// Record cat's position in cats_x[] and cats_y[]
-	for (u8 i = 0; i < MAX_CATS; i++) {
-		if (!cats_x[i] && !cats_y[i]) {
-			cats_x[i] = empty_tiles_x[random_tile];
-			cats_y[i] = empty_tiles_y[random_tile];
-			break;
-		}
-	}
+	*x = empty_tiles_x[random_tile];
+	*y = empty_tiles_y[random_tile];
 }
 
 void Game::move_cat(u8 cat_num) {
@@ -411,4 +442,12 @@ void Game::update_score() {
 
 	screen_bottom.rect(SCORE_X, SCORE_Y, SCORE_X + 50, SCORE_Y + font->get_font_height(), BACKGROUND_COLOR, RECT_FILLED);
 	font->print_string(score_str, SCORE_X, SCORE_Y, &screen_bottom, RGB(0, 0, 0));
+}
+
+void Game::update_lives() {
+	screen_bottom.rect(LIVES_X, LIVES_Y, LIVES_X + ((big_mouse_tile.get_width() + 3) * NUM_LIVES), LIVES_Y + big_mouse_tile.get_height(), BACKGROUND_COLOR, RECT_FILLED);
+
+	for (u8 i = 0; i < lives; i++) {
+		big_mouse_tile.draw(&screen_bottom, LIVES_X + (i * (big_mouse_tile.get_width() + 3)), LIVES_Y);
+	}
 }

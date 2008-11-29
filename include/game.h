@@ -19,8 +19,11 @@ const u8 NUM_LIVES = 3;
 
 const u8 MAX_CATS = 32;
 
-const u8 SCORE_X = 10;
-const u8 SCORE_Y = 10;
+const u8 SCORE_X = SCREEN_WIDTH - 55;
+const u8 SCORE_Y = 15;
+
+const u8 LIVES_X = 10;
+const u8 LIVES_Y = 15;
 
 const Color BACKGROUND_COLOR = RGB(23, 23, 23);
 
@@ -68,6 +71,7 @@ class Game {
 		Font *font;
 		TileMap map;
 		Tile tiles[NUM_TILES];
+		Tile big_mouse_tile;
 		u8 mouse_x;
 		u8 mouse_y;
 		u8 lives;
@@ -84,8 +88,10 @@ class Game {
 		void move_mouse(u8 x, u8 y);
 		void spawn_cats();
 		void spawn_single_cat();
+		void random_empty_tile(u8 *x, u8 *y);
 		void move_cat(u8 cat_num);
 		void update_score();
+		void update_lives();
 };
 
 #endif

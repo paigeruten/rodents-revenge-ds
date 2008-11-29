@@ -133,7 +133,6 @@ void Game::play_level() {
 	screen_bottom.clear(RGB(23, 23, 23));
 
 	Clock clock(&screen_bottom, (SCREEN_WIDTH - CLOCK_WIDTH) / 2, 10);
-
 	clock.draw();
 
 	spawn_cats();
@@ -143,94 +142,22 @@ void Game::play_level() {
 
 	keysSetRepeat(15, 3);
 
-	while (lives) {
+	done_level = false;
+
+	while (!done_level) {
 		scanKeys();
 		u32 keys_down = keysDownRepeat();
 
 		if (state == STATE_DYING) {
-			u8 random_x;
-			u8 random_y;
-
-			state = STATE_NORMAL;
-
-			// TODO: Play animation of mouse dying here.
-
-			random_empty_tile(&random_x, &random_y);
-
-			mouse_x = random_x;
-			mouse_y = random_y;
-
-			map.set_tile(mouse_x, mouse_y, TILE_MOUSE);
-
-			lives--;
-
-			update_lives();
+			die();
 		} else if (state == STATE_SINKHOLE) {
-			s32 length_of_time_in_hole = clock.get_tick() - time_stuck_in_sinkhole;
-
-			if (length_of_time_in_hole > options.get_speed() * 5) {
-				state = STATE_NORMAL;
-				map.set_tile(mouse_x, mouse_y, TILE_MOUSE);
-			}
+			wait_in_sinkhole(clock.get_tick());
 		} else {
-			if (keys_down & (KEY_LEFT | KEY_RIGHT | KEY_UP | KEY_DOWN)) {
-				u8 new_mouse_x = mouse_x;
-				u8 new_mouse_y = mouse_y;
-
-				if (keys_down & KEY_LEFT) {
-					new_mouse_x--;
-				} else if (keys_down & KEY_RIGHT) {
-					new_mouse_x++;
-				} else if (keys_down & KEY_DOWN) {
-					new_mouse_y++;
-				} else if (keys_down & KEY_UP) {
-					new_mouse_y--;
-				}
-
-				TileNum new_tile = map.get_tile(new_mouse_x, new_mouse_y);
-
-				switch (new_tile) {
-					case TILE_CHEESE:
-						score += 100;
-						move_mouse(new_mouse_x, new_mouse_y);
-						break;
-
-					case TILE_EMPTY:
-						move_mouse(new_mouse_x, new_mouse_y);
-						break;
-
-					case TILE_MOVABLE_BLOCK:
-						push_block(new_mouse_x, new_mouse_y);
-						break;
-
-					case TILE_SINK_HOLE:
-						map.set_tile(mouse_x, mouse_y, TILE_EMPTY);
-						map.set_tile(new_mouse_x, new_mouse_y, TILE_MOUSE_SINKHOLE);
-
-						mouse_x = new_mouse_x;
-						mouse_y = new_mouse_y;
-
-						time_stuck_in_sinkhole = clock.get_tick();
-						state = STATE_SINKHOLE;
-						break;
-
-					case TILE_MOUSE_TRAP:
-						state = STATE_DYING;
-						break;
-
-					default:
-						// All other tiles cannot be moved upon.
-						break;
-				}		
-			}
+			handle_input(keys_down, clock.get_tick());
 		}
 
 		if (clock.get_second_tick()) {
-			for (u8 i = 0; i < MAX_CATS; i++) {
-				if (cats_x[i] || cats_y[i]) {
-					move_cat(i);
-				}
-			}
+			move_cats();
 		}
 
 		if (clock.get_reached_blue_line()) {
@@ -244,6 +171,100 @@ void Game::play_level() {
 		clock.update();
 
 		swiWaitForVBlank();
+	}
+}
+
+void Game::wait_in_sinkhole(u32 current_time) {
+	s32 length_of_time_in_hole = current_time - time_stuck_in_sinkhole;
+
+	if (length_of_time_in_hole > options.get_speed() * 5) {
+		state = STATE_NORMAL;
+		map.set_tile(mouse_x, mouse_y, TILE_MOUSE);
+	}
+}
+
+void Game::move_cats() {
+	for (u8 i = 0; i < MAX_CATS; i++) {
+		if (cats_x[i] || cats_y[i]) {
+			move_cat(i);
+		}
+	}
+}
+
+void Game::die() {
+	u8 random_x;
+	u8 random_y;
+
+	lives--;
+	if (lives == 0) {
+		done_level = true;
+	}
+
+	state = STATE_NORMAL;
+
+	// TODO: Play animation of mouse dying here.
+
+	// Randomly respawn mouse to new location
+	random_empty_tile(&random_x, &random_y);
+
+	mouse_x = random_x;
+	mouse_y = random_y;
+
+	map.set_tile(mouse_x, mouse_y, TILE_MOUSE);
+
+	update_lives();
+}
+
+void Game::handle_input(u32 input, u32 current_time) {
+	if (input & (KEY_LEFT | KEY_RIGHT | KEY_UP | KEY_DOWN)) {
+		u8 new_mouse_x = mouse_x;
+		u8 new_mouse_y = mouse_y;
+
+		if (input & KEY_LEFT) {
+			new_mouse_x--;
+		} else if (input & KEY_RIGHT) {
+			new_mouse_x++;
+		} else if (input & KEY_DOWN) {
+			new_mouse_y++;
+		} else if (input & KEY_UP) {
+			new_mouse_y--;
+		}
+
+		TileNum new_tile = map.get_tile(new_mouse_x, new_mouse_y);
+
+		switch (new_tile) {
+			case TILE_CHEESE:
+				score += 100;
+				move_mouse(new_mouse_x, new_mouse_y);
+				break;
+
+			case TILE_EMPTY:
+				move_mouse(new_mouse_x, new_mouse_y);
+				break;
+
+			case TILE_MOVABLE_BLOCK:
+				push_block(new_mouse_x, new_mouse_y);
+				break;
+
+			case TILE_SINK_HOLE:
+				map.set_tile(mouse_x, mouse_y, TILE_EMPTY);
+				map.set_tile(new_mouse_x, new_mouse_y, TILE_MOUSE_SINKHOLE);
+
+				mouse_x = new_mouse_x;
+				mouse_y = new_mouse_y;
+
+				time_stuck_in_sinkhole = current_time;
+				state = STATE_SINKHOLE;
+				break;
+
+			case TILE_MOUSE_TRAP:
+				state = STATE_DYING;
+				break;
+
+			default:
+				// All other tiles cannot be moved upon.
+				break;
+		}		
 	}
 }
 

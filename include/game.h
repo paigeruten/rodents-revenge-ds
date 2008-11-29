@@ -81,14 +81,19 @@ class Game {
 		u32 time_stuck_in_sinkhole;
 		u8 cats_x[MAX_CATS];
 		u8 cats_y[MAX_CATS];
+		bool done_level;
 
 		void load_level();
 		void play_level();
+		void wait_in_sinkhole(u32 current_time);
+		void die();
+		void handle_input(u32 input, u32 current_time);
 		void push_block(u8 x, u8 y);
 		void move_mouse(u8 x, u8 y);
 		void spawn_cats();
 		void spawn_single_cat();
 		void random_empty_tile(u8 *x, u8 *y);
+		void move_cats();
 		void move_cat(u8 cat_num);
 		void update_score();
 		void update_lives();

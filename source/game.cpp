@@ -222,6 +222,8 @@ void Game::play_level() {
 
 		map.draw(36, 4);
 
+		update_score();
+
 		clock.update();
 
 		swiWaitForVBlank();
@@ -255,6 +257,21 @@ void Game::push_block(u8 x, u8 y) {
 
 		case TILE_SINK_HOLE:
 			move_mouse(x, y);
+			break;
+
+		case TILE_CAT:
+			for (u8 i = 0; i < MAX_CATS; i++) {
+				if (cats_x[i] == current_x && cats_y[i] == current_y) {
+					move_cat(i);
+				}
+			}
+
+			// If the cat moved successfully, move the row of blocks
+			if (map.get_tile(current_x, current_y) == TILE_EMPTY) {
+				map.set_tile(current_x, current_y, TILE_MOVABLE_BLOCK);
+				move_mouse(x, y);
+			}
+
 			break;
 
 		default:
@@ -387,6 +404,11 @@ void Game::move_cat(u8 cat_num) {
 			}
 		}
 	}
+}
 
-	
+void Game::update_score() {
+	char *score_str = strval(score);
+
+	screen_bottom.rect(SCORE_X, SCORE_Y, SCORE_X + 50, SCORE_Y + font->get_font_height(), BACKGROUND_COLOR, RECT_FILLED);
+	font->print_string(score_str, SCORE_X, SCORE_Y, &screen_bottom, RGB(0, 0, 0));
 }

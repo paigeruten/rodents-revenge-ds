@@ -1,6 +1,7 @@
 #ifndef _game_h
 #define _game_h
 
+#include "color.h"
 #include "canvas.h"
 #include "font.h"
 #include "tile.h"
@@ -17,6 +18,11 @@ const u8 TILE_HEIGHT = 8;
 const u8 NUM_LIVES = 3;
 
 const u8 MAX_CATS = 32;
+
+const u8 SCORE_X = 10;
+const u8 SCORE_Y = 10;
+
+const Color BACKGROUND_COLOR = RGB(23, 23, 23);
 
 enum {
 	TILE_EMPTY,
@@ -79,6 +85,7 @@ class Game {
 		void spawn_cats();
 		void spawn_single_cat();
 		void move_cat(u8 cat_num);
+		void update_score();
 };
 
 #endif

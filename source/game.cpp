@@ -61,7 +61,6 @@ u32 Game::begin() {
 	lives = NUM_LIVES;
 	level = options.get_start_level();
 	score = 0;
-	state = STATE_NORMAL;
 
 	while (lives) {
 		load_level();
@@ -134,6 +133,8 @@ void Game::play_level() {
 	num_cats = 0;
 	num_sitting_cats = 0;
 
+	state = STATE_NORMAL;
+
 	screen_top.clear(RGB(23, 23, 23));
 	screen_bottom.clear(RGB(23, 23, 23));
 
@@ -153,20 +154,44 @@ void Game::play_level() {
 		scanKeys();
 		u32 keys_down = keysDownRepeat();
 
-		if (state == STATE_DYING) {
-			die();
-		} else if (state == STATE_SINKHOLE) {
-			wait_in_sinkhole(clock.get_tick());
-		} else {
-			handle_input(keys_down, clock.get_tick());
-		}
-
 		if (clock.get_second_tick()) {
 			move_cats();
 		}
 
 		if (clock.get_reached_blue_line()) {
-			spawn_cats();
+			if (state == STATE_FAST_FORWARD) {
+				state = STATE_NORMAL;
+				clock.set_speed(options.get_speed());
+			}
+
+			if (clock.get_state() == CLOCK_STOPPED) {
+				done_level = true;
+			} else {
+				spawn_cats();
+			}
+		}
+
+		if (clock.get_state() == CLOCK_STOPPED) {
+			if (num_cats == 0) {
+				done_level = true;
+			}
+		}
+
+		switch (state) {
+			case STATE_FAST_FORWARD:
+				// Intentional fall-through
+				clock.set_speed(1);
+			case STATE_NORMAL:
+				handle_input(keys_down, clock.get_tick());
+				break;
+
+			case STATE_DYING:
+				die();
+				break;
+
+			case STATE_SINKHOLE:
+				wait_in_sinkhole(clock.get_tick());
+				break;
 		}
 
 		map.draw(36, 4);
@@ -490,7 +515,7 @@ void Game::destroy_cats() {
 	num_cats = 0;
 	num_sitting_cats = 0;
 
-	// TODO: fast-forward clock to blue line here.
+	state = STATE_FAST_FORWARD;
 }
 
 void Game::update_score() {

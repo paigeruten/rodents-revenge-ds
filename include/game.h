@@ -56,7 +56,7 @@ enum Direction {
 	DIRECTION_NORTHWEST
 };
 
-enum PlayerState { STATE_NORMAL, STATE_SINKHOLE, STATE_DYING };
+enum PlayerState { STATE_NORMAL, STATE_SINKHOLE, STATE_DYING, STATE_FAST_FORWARD };
 
 class Game {
 	public:

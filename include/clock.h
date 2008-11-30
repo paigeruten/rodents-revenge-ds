@@ -27,6 +27,8 @@ class Clock {
 		bool get_reached_blue_line() const { return reached_blue_line; }
 		bool get_second_tick() const { return second_tick; }
 		bool get_minute_tick() const { return minute_tick; }
+		u8 get_speed() const { return speed; }
+		void set_speed(u8 new_speed) { speed = new_speed; }
 
 		// Methods
 		void update();
@@ -41,6 +43,7 @@ class Clock {
 		u8 blue_line;
 		u32 tick;
 		ClockState state;
+		u8 speed;
 		bool reached_blue_line;
 		bool second_tick;
 		bool minute_tick;

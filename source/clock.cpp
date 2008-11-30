@@ -61,6 +61,7 @@ Clock::Clock(Canvas *the_canvas, u16 the_x, u16 the_y) {
 	blue_line = 0;
 	tick = 0;
 	state = CLOCK_STARTED;
+	speed = options.get_speed();
 
 	second_tick = false;
 	minute_tick = false;
@@ -79,7 +80,7 @@ void Clock::update() {
 	minute_tick = false;
 	reached_blue_line = false;
 
-	if (tick % options.get_speed() == 0) {
+	if (tick % speed == 0) {
 		second++;
 		second_tick = true;
 

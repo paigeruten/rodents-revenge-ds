@@ -37,6 +37,7 @@ Game::Game(Canvas *the_canvas, Font *the_font) {
 	tiles[9].load_from_file("/data/rodents-revenge/tiles/mouse_sinkhole.tile");
 	tiles[10].load_from_file("/data/rodents-revenge/tiles/border_opening_vertical.tile");
 	tiles[11].load_from_file("/data/rodents-revenge/tiles/border_opening_horizontal.tile");
+	tiles[12].load_from_file("/data/rodents-revenge/tiles/cat_sitting.tile");
 
 	map.add_tile(&tiles[0], TILE_EMPTY);
 	map.add_tile(&tiles[1], TILE_MOVABLE_BLOCK);
@@ -50,6 +51,7 @@ Game::Game(Canvas *the_canvas, Font *the_font) {
 	map.add_tile(&tiles[9], TILE_MOUSE_SINKHOLE);
 	map.add_tile(&tiles[10], TILE_BORDER_OPENING_VERTICAL);
 	map.add_tile(&tiles[11], TILE_BORDER_OPENING_HORIZONTAL);
+	map.add_tile(&tiles[12], TILE_CAT_SITTING);
 }
 
 Game::~Game() {
@@ -129,6 +131,9 @@ void Game::load_level() {
 }
 
 void Game::play_level() {
+	num_cats = 0;
+	num_sitting_cats = 0;
+
 	screen_top.clear(RGB(23, 23, 23));
 	screen_bottom.clear(RGB(23, 23, 23));
 
@@ -258,6 +263,8 @@ void Game::handle_input(u32 input, u32 current_time) {
 				break;
 
 			case TILE_MOUSE_TRAP:
+				move_mouse(new_mouse_x, new_mouse_y);
+				map.set_tile(new_mouse_x, new_mouse_y, TILE_MOUSE_TRAP);
 				state = STATE_DYING;
 				break;
 
@@ -354,6 +361,8 @@ void Game::spawn_single_cat() {
 			break;
 		}
 	}
+
+	num_cats++;
 }
 
 void Game::random_empty_tile(u8 *x, u8 *y) {
@@ -380,7 +389,9 @@ void Game::random_empty_tile(u8 *x, u8 *y) {
 
 void Game::move_cat(u8 cat_num) {
 	u8 x = cats_x[cat_num];
-	u8 y = cats_y[cat_num];	
+	u8 y = cats_y[cat_num];
+
+	bool sitting = (map.get_tile(x, y) == TILE_CAT_SITTING);
 
 	// Get the cat's possible new positions for each of the 8 directions
 	u8 new_x[NUM_DIRECTIONS];
@@ -428,11 +439,16 @@ void Game::move_cat(u8 cat_num) {
 		}
 
 		if (!can_move) {
-			// TODO: make cat curl up or turn into a piece of cheese here.
-			// For now just turn it into a piece of cheese.
-			map.set_tile(x, y, TILE_CHEESE);
-			cats_x[cat_num] = 0;
-			cats_y[cat_num] = 0;
+			if (!sitting) {
+				num_sitting_cats++;
+			}
+
+			// If all cats are sitting, turn them all into cheese
+			if (num_cats == num_sitting_cats) {
+				destroy_cats();
+			} else {
+				map.set_tile(x, y, TILE_CAT_SITTING);
+			}
 
 			done = true;
 		} else {
@@ -448,6 +464,10 @@ void Game::move_cat(u8 cat_num) {
 					cats_x[cat_num] = new_x[min_direction];
 					cats_y[cat_num] = new_y[min_direction];
 
+					if (sitting) {
+						num_sitting_cats--;
+					}
+
 					done = true;
 					break;
 
@@ -456,6 +476,21 @@ void Game::move_cat(u8 cat_num) {
 			}
 		}
 	}
+}
+
+void Game::destroy_cats() {
+	for (u8 i = 0; i < MAX_CATS; i++) {
+		if (cats_x[i] || cats_y[i]) {
+			map.set_tile(cats_x[i], cats_y[i], TILE_CHEESE);
+			cats_x[i] = 0;
+			cats_y[i] = 0;
+		}
+	}
+
+	num_cats = 0;
+	num_sitting_cats = 0;
+
+	// TODO: fast-forward clock to blue line here.
 }
 
 void Game::update_score() {

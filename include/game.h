@@ -7,7 +7,7 @@
 #include "tile.h"
 #include "tilemap.h"
 
-const u8 NUM_TILES = 12;
+const u8 NUM_TILES = 13;
 
 const u8 LEVEL_WIDTH = 23;
 const u8 LEVEL_HEIGHT = 23;
@@ -39,7 +39,8 @@ enum {
 	TILE_CHEESE,
 	TILE_MOUSE_SINKHOLE,
 	TILE_BORDER_OPENING_VERTICAL,
-	TILE_BORDER_OPENING_HORIZONTAL
+	TILE_BORDER_OPENING_HORIZONTAL,
+	TILE_CAT_SITTING
 };
 
 const u8 NUM_DIRECTIONS = 8;
@@ -81,6 +82,8 @@ class Game {
 		u32 time_stuck_in_sinkhole;
 		u8 cats_x[MAX_CATS];
 		u8 cats_y[MAX_CATS];
+		u8 num_cats;
+		u8 num_sitting_cats;
 		bool done_level;
 
 		void load_level();
@@ -95,6 +98,7 @@ class Game {
 		void random_empty_tile(u8 *x, u8 *y);
 		void move_cats();
 		void move_cat(u8 cat_num);
+		void destroy_cats();
 		void update_score();
 		void update_lives();
 };

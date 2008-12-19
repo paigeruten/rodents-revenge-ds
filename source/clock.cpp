@@ -115,15 +115,34 @@ void Clock::draw() {
 		}
 	}
 
+	// These are multiplied by 12 because their maximum value is 30, and
+	// 30 * 12 is 360, a full circle around the clock.
+	float second_angle = degrees2radians(second * 12);
+	float minute_angle = degrees2radians(minute * 12);
+	float blue_line_angle = degrees2radians(blue_line * 12);
+
+	draw_clock_hand(second_angle, SECOND_HAND_RADIUS, RGB(31, 0, 0));
+	draw_clock_hand(minute_angle, MINUTE_HAND_RADIUS, RGB(0, 0, 15));
+	draw_clock_hand(blue_line_angle, BLUE_HAND_RADIUS, RGB(0, 0, 31));
+}
+
+void Clock::draw_clock_hand(float angle, float radius, Color color) {
 	u32 clock_center_x = x + (CLOCK_WIDTH / 2);
 	u32 clock_center_y = y + (CLOCK_HEIGHT / 2);
 
-	canvas->line(clock_center_x, clock_center_y, clock_center_x + sin(second * 12 * PI / 180.0) * 9.0, clock_center_y - cos(second * 12 * PI / 180.0) * 9.0, RGB(31, 0, 0));
-	canvas->line(clock_center_x, clock_center_y, clock_center_x + sin(minute * 12 * PI / 180.0) * 9.0, clock_center_y - cos(minute * 12 * PI / 180.0) * 9.0, RGB(0, 0, 15));
-	canvas->line(clock_center_x, clock_center_y, clock_center_x + sin(blue_line * 12 * PI / 180.0) * 5.0, clock_center_y - cos(blue_line * 12 * PI / 180.0) * 5.0, RGB(0, 0, 31));
+	u16 x1 = clock_center_x;
+	u16 y1 = clock_center_y;
+	u16 x2 = clock_center_x + sin(angle) * radius;
+	u16 y2 = clock_center_y - cos(angle) * radius;
+
+	canvas->line(x1, y1, x2, y2, color);
 }
 
 void Clock::update_blue_line() {
 	blue_line = (blue_line + 6) % 30;
+}
+
+float Clock::degrees2radians(u16 degrees) {
+	return degrees * PI / 180.0;
 }
 

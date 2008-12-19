@@ -8,6 +8,10 @@ enum ClockState { CLOCK_STARTED, CLOCK_STOPPED };
 const u8 CLOCK_WIDTH = 29;
 const u8 CLOCK_HEIGHT = 32;
 
+const float SECOND_HAND_RADIUS = 9.0;
+const float MINUTE_HAND_RADIUS = 9.0;
+const float BLUE_HAND_RADIUS = 5.0;
+
 class Clock {
 	public:
 		// Constructors
@@ -48,7 +52,9 @@ class Clock {
 		bool second_tick;
 		bool minute_tick;
 
+		void draw_clock_hand(float angle, float radius, Color color);
 		void update_blue_line();
+		float degrees2radians(u16 degrees);
 };
 
 #endif

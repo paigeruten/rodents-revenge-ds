@@ -62,7 +62,7 @@ void TileMap::draw(u16 x, u16 y) const {
 	}
 }
 
-u8 TileMap::distance(u8 x1, u8 y1, u8 x2, u8 y2) {
+float TileMap::distance(u8 x1, u8 y1, u8 x2, u8 y2) {
 	s16 dx = x2 - x1;
 	s16 dy = y2 - y1;
 

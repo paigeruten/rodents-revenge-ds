@@ -452,7 +452,7 @@ void Game::move_cat(u8 cat_num) {
 
 	// For each of the 8 directions, calculate the distance from the mouse to
 	// the cat if the cat were to move in that direction.
-	s16 distance[NUM_DIRECTIONS];
+	float distance[NUM_DIRECTIONS];
 	for (u8 i = 0; i < NUM_DIRECTIONS; i++) {
 		distance[i] = map.distance(new_x[i], new_y[i], mouse_x, mouse_y);
 	}
@@ -460,16 +460,16 @@ void Game::move_cat(u8 cat_num) {
 	bool done = false;
 	while (!done) {
 		// Find the direction with the minimum distance.
-		s16 min_distance = 255;
+		float min_distance = 256;
 		Direction min_direction = DIRECTION_NORTH;
 		bool can_move = false;
 		for (u8 i = 0; i < NUM_DIRECTIONS; i++) {
-			if (distance[i] < min_distance && distance[i] != -1) {
+			if (distance[i] < min_distance && distance[i] >= 0) {
 				min_distance = distance[i];
 				min_direction = (Direction)i;
 			}
 
-			if (distance[i] != -1) {
+			if (distance[i] >= 0) {
 				can_move = true;
 			}
 		}

@@ -298,6 +298,17 @@ void Game::handle_input(u32 input, u32 current_time) {
 				break;
 		}		
 	}
+
+	// Take screenshot (not for ordinairy users)
+	u32 screenshot_key_combo = (KEY_L | KEY_R | KEY_A | KEY_B | KEY_X | KEY_Y | KEY_START | KEY_SELECT);
+	if ((keysHeld() & screenshot_key_combo) == screenshot_key_combo) {
+		while (keysHeld()) { scanKeys(); }
+
+		FILE *screenshot = fopen("/rodents_revenge.scr", "w");
+		fwrite(screen_top.get_data(), sizeof(Color), SCREEN_WIDTH * SCREEN_HEIGHT, screenshot);
+		fwrite(screen_bottom.get_data(), sizeof(Color), SCREEN_WIDTH * SCREEN_HEIGHT, screenshot);
+		fclose(screenshot);
+	}
 }
 
 // This method handles the pushing of a block or row of blocks. Note: when you push

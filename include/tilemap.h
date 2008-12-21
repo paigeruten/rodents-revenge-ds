@@ -31,7 +31,6 @@ class TileMap {
 		void add_tile(Tile *tile, TileNum num);
 		void remove_tile(TileNum num);
 		void draw(u16 x, u16 y) const;
-		float distance(u8 x1, u8 y1, u8 x2, u8 y2);
 
 	private:
 		Canvas *canvas;

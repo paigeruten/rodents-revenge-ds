@@ -3,7 +3,7 @@
 
 Options options(DEFAULT_START_LEVEL, DEFAULT_SPEED);
 
-Options::Options(u8 the_start_level, GameSpeed the_speed) {
+Options::Options(LevelId the_start_level, GameSpeed the_speed) {
 	start_level = the_start_level;
 	speed = the_speed;
 }

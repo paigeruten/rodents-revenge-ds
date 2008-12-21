@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 #include "canvas.h"
 #include "font.h"
 #include "options.h"
@@ -9,13 +10,14 @@
 #include "tile.h"
 #include "tilemap.h"
 #include "clock.h"
+#include "level.h"
 #include "game.h"
 
 Game::Game(Canvas *the_canvas, Font *the_font) {
 	canvas = the_canvas;
 	font = the_font;
 
-	map.init(canvas, LEVEL_WIDTH, LEVEL_HEIGHT, TILE_WIDTH, TILE_HEIGHT);
+	level.init(canvas);
 
 	for (u8 i = 0; i < MAX_CATS; i++) {
 		cats_x[i] = 0;
@@ -24,34 +26,6 @@ Game::Game(Canvas *the_canvas, Font *the_font) {
 
 	// This tile is used to display the number of lives
 	big_mouse_tile.load_from_file("/data/rodents-revenge/tiles/mouse_big.tile");
-
-	tiles[0].load_from_file("/data/rodents-revenge/tiles/empty.tile");
-	tiles[1].load_from_file("/data/rodents-revenge/tiles/movable_block.tile");
-	tiles[2].load_from_file("/data/rodents-revenge/tiles/stationary_block.tile");
-	tiles[3].load_from_file("/data/rodents-revenge/tiles/mouse.tile");
-	tiles[4].load_from_file("/data/rodents-revenge/tiles/cat.tile");
-	tiles[5].load_from_file("/data/rodents-revenge/tiles/yarn.tile");
-	tiles[6].load_from_file("/data/rodents-revenge/tiles/trap.tile");
-	tiles[7].load_from_file("/data/rodents-revenge/tiles/sinkhole.tile");
-	tiles[8].load_from_file("/data/rodents-revenge/tiles/cheese.tile");
-	tiles[9].load_from_file("/data/rodents-revenge/tiles/mouse_sinkhole.tile");
-	tiles[10].load_from_file("/data/rodents-revenge/tiles/border_opening_vertical.tile");
-	tiles[11].load_from_file("/data/rodents-revenge/tiles/border_opening_horizontal.tile");
-	tiles[12].load_from_file("/data/rodents-revenge/tiles/cat_sitting.tile");
-
-	map.add_tile(&tiles[0], TILE_EMPTY);
-	map.add_tile(&tiles[1], TILE_MOVABLE_BLOCK);
-	map.add_tile(&tiles[2], TILE_STATIONARY_BLOCK);
-	map.add_tile(&tiles[3], TILE_MOUSE);
-	map.add_tile(&tiles[4], TILE_CAT);
-	map.add_tile(&tiles[5], TILE_YARN);
-	map.add_tile(&tiles[6], TILE_MOUSE_TRAP);
-	map.add_tile(&tiles[7], TILE_SINK_HOLE);
-	map.add_tile(&tiles[8], TILE_CHEESE);
-	map.add_tile(&tiles[9], TILE_MOUSE_SINKHOLE);
-	map.add_tile(&tiles[10], TILE_BORDER_OPENING_VERTICAL);
-	map.add_tile(&tiles[11], TILE_BORDER_OPENING_HORIZONTAL);
-	map.add_tile(&tiles[12], TILE_CAT_SITTING);
 }
 
 Game::~Game() {
@@ -59,74 +33,16 @@ Game::~Game() {
 
 u32 Game::begin() {
 	lives = NUM_LIVES;
-	level = options.get_start_level();
+	level.set_current_level(options.get_start_level());
 	score = 0;
 
 	while (lives) {
-		load_level();
+		level.load();
 		play_level();
-
-		if (level < 50) {
-			level++;
-		}
+		level.next();
 	}
 
 	return score;
-}
-
-void Game::load_level() {
-	char level_path[256];
-
-	strcpy(level_path, "/data/rodents-revenge/levels/");
-	strcat(level_path, strval(level));
-	strcat(level_path, ".level");
-
-	FILE *level_file = fopen(level_path, "r");
-
-	for (u8 y = 0; y < LEVEL_HEIGHT; y++) {
-		for (u8 x = 0; x < LEVEL_WIDTH; x++) {
-			char current_char = fgetc(level_file);
-
-			switch (current_char) {
-				case ' ':
-					map.set_tile(x, y, TILE_EMPTY);
-					break;
-
-				case 'O':
-					map.set_tile(x, y, TILE_MOVABLE_BLOCK);
-					break;
-
-				case '-':
-				case '|':
-				case '+':
-				case '@':
-					map.set_tile(x, y, TILE_STATIONARY_BLOCK);
-					break;
-
-				case 'M':
-					map.set_tile(x, y, TILE_MOUSE);
-					mouse_x = x;
-					mouse_y = y;
-					break;
-
-				case 'T':
-					map.set_tile(x, y, TILE_MOUSE_TRAP);
-					break;
-
-				case 'S':
-					map.set_tile(x, y, TILE_SINK_HOLE);
-					break;
-
-				default:
-					map.set_tile(x, y, TILE_EMPTY);
-			}
-		}
-
-		// Skip newline
-		fgetc(level_file);
-	}
-
-	fclose(level_file);
 }
 
 void Game::play_level() {
@@ -194,7 +110,7 @@ void Game::play_level() {
 				break;
 		}
 
-		map.draw(36, 4);
+		level.draw(36, 4);
 
 		update_score();
 
@@ -209,7 +125,7 @@ void Game::wait_in_sinkhole(u32 current_time) {
 
 	if (length_of_time_in_hole > options.get_speed() * 5) {
 		state = STATE_NORMAL;
-		map.set_tile(mouse_x, mouse_y, TILE_MOUSE);
+		level.set_tile(mouse_x, mouse_y, TILE_MOUSE);
 	}
 }
 
@@ -240,7 +156,7 @@ void Game::die() {
 	mouse_x = random_x;
 	mouse_y = random_y;
 
-	map.set_tile(mouse_x, mouse_y, TILE_MOUSE);
+	level.set_tile(mouse_x, mouse_y, TILE_MOUSE);
 
 	update_lives();
 }
@@ -260,7 +176,7 @@ void Game::handle_input(u32 input, u32 current_time) {
 			new_mouse_y--;
 		}
 
-		TileNum new_tile = map.get_tile(new_mouse_x, new_mouse_y);
+		TileNum new_tile = level.get_tile(new_mouse_x, new_mouse_y);
 
 		switch (new_tile) {
 			case TILE_CHEESE:
@@ -277,8 +193,8 @@ void Game::handle_input(u32 input, u32 current_time) {
 				break;
 
 			case TILE_SINK_HOLE:
-				map.set_tile(mouse_x, mouse_y, TILE_EMPTY);
-				map.set_tile(new_mouse_x, new_mouse_y, TILE_MOUSE_SINKHOLE);
+				level.set_tile(mouse_x, mouse_y, TILE_EMPTY);
+				level.set_tile(new_mouse_x, new_mouse_y, TILE_MOUSE_SINKHOLE);
 
 				mouse_x = new_mouse_x;
 				mouse_y = new_mouse_y;
@@ -289,7 +205,7 @@ void Game::handle_input(u32 input, u32 current_time) {
 
 			case TILE_MOUSE_TRAP:
 				move_mouse(new_mouse_x, new_mouse_y);
-				map.set_tile(new_mouse_x, new_mouse_y, TILE_MOUSE_TRAP);
+				level.set_tile(new_mouse_x, new_mouse_y, TILE_MOUSE_TRAP);
 				state = STATE_DYING;
 				break;
 
@@ -322,17 +238,17 @@ void Game::push_block(u8 x, u8 y) {
 	u8 current_x = x;
 	u8 current_y = y;
 
-	while (map.get_tile(current_x, current_y) == TILE_MOVABLE_BLOCK) {
+	while (level.get_tile(current_x, current_y) == TILE_MOVABLE_BLOCK) {
 		current_x += delta_x;
 		current_y += delta_y;
 	}
 
-	TileNum end_tile = map.get_tile(current_x, current_y);
+	TileNum end_tile = level.get_tile(current_x, current_y);
 
 	switch (end_tile) {
 		case TILE_EMPTY:
 		case TILE_CHEESE:
-			map.set_tile(current_x, current_y, TILE_MOVABLE_BLOCK);
+			level.set_tile(current_x, current_y, TILE_MOVABLE_BLOCK);
 			move_mouse(x, y);
 			break;
 
@@ -348,8 +264,8 @@ void Game::push_block(u8 x, u8 y) {
 			}
 
 			// If the cat moved successfully, move the row of blocks
-			if (map.get_tile(current_x, current_y) == TILE_EMPTY) {
-				map.set_tile(current_x, current_y, TILE_MOVABLE_BLOCK);
+			if (level.get_tile(current_x, current_y) == TILE_EMPTY) {
+				level.set_tile(current_x, current_y, TILE_MOVABLE_BLOCK);
 				move_mouse(x, y);
 			}
 
@@ -362,8 +278,8 @@ void Game::push_block(u8 x, u8 y) {
 }
 
 void Game::move_mouse(u8 x, u8 y) {
-	map.set_tile(mouse_x, mouse_y, TILE_EMPTY);
-	map.set_tile(x, y, TILE_MOUSE);
+	level.set_tile(mouse_x, mouse_y, TILE_EMPTY);
+	level.set_tile(x, y, TILE_MOUSE);
 
 	mouse_x = x;
 	mouse_y = y;
@@ -387,7 +303,7 @@ void Game::spawn_single_cat() {
 
 	random_empty_tile(&random_x, &random_y);
 
-	map.set_tile(random_x, random_y, TILE_CAT);
+	level.set_tile(random_x, random_y, TILE_CAT);
 
 	// Record cat's position in cats_x[] and cats_y[]
 	for (u8 i = 0; i < MAX_CATS; i++) {
@@ -409,7 +325,7 @@ void Game::random_empty_tile(u8 *x, u8 *y) {
 
 	for (u8 tile_x = 0; tile_x < LEVEL_WIDTH; tile_x++) {
 		for (u8 tile_y = 0; tile_y < LEVEL_HEIGHT; tile_y++) {
-			if (map.get_tile(tile_x, tile_y) == TILE_EMPTY) {
+			if (level.get_tile(tile_x, tile_y) == TILE_EMPTY) {
 				empty_tiles_x[num_empty_tiles] = tile_x;
 				empty_tiles_y[num_empty_tiles] = tile_y;
 				num_empty_tiles++;
@@ -427,7 +343,7 @@ void Game::move_cat(u8 cat_num) {
 	u8 x = cats_x[cat_num];
 	u8 y = cats_y[cat_num];
 
-	bool sitting = (map.get_tile(x, y) == TILE_CAT_SITTING);
+	bool sitting = (level.get_tile(x, y) == TILE_CAT_SITTING);
 
 	// Get the cat's possible new positions for each of the 8 directions
 	u8 new_x[NUM_DIRECTIONS];
@@ -452,9 +368,9 @@ void Game::move_cat(u8 cat_num) {
 
 	// For each of the 8 directions, calculate the distance from the mouse to
 	// the cat if the cat were to move in that direction.
-	float distance[NUM_DIRECTIONS];
+	float distances[NUM_DIRECTIONS];
 	for (u8 i = 0; i < NUM_DIRECTIONS; i++) {
-		distance[i] = map.distance(new_x[i], new_y[i], mouse_x, mouse_y);
+		distances[i] = distance(new_x[i], new_y[i], mouse_x, mouse_y);
 	}
 
 	bool done = false;
@@ -464,12 +380,12 @@ void Game::move_cat(u8 cat_num) {
 		Direction min_direction = DIRECTION_NORTH;
 		bool can_move = false;
 		for (u8 i = 0; i < NUM_DIRECTIONS; i++) {
-			if (distance[i] < min_distance && distance[i] >= 0) {
-				min_distance = distance[i];
+			if (distances[i] < min_distance && distances[i] >= 0) {
+				min_distance = distances[i];
 				min_direction = (Direction)i;
 			}
 
-			if (distance[i] >= 0) {
+			if (distances[i] >= 0) {
 				can_move = true;
 			}
 		}
@@ -483,19 +399,19 @@ void Game::move_cat(u8 cat_num) {
 			if (num_cats == num_sitting_cats) {
 				destroy_cats();
 			} else {
-				map.set_tile(x, y, TILE_CAT_SITTING);
+				level.set_tile(x, y, TILE_CAT_SITTING);
 			}
 
 			done = true;
 		} else {
-			TileNum the_tile = map.get_tile(new_x[min_direction], new_y[min_direction]);
+			TileNum the_tile = level.get_tile(new_x[min_direction], new_y[min_direction]);
 
 			switch (the_tile) {
 				case TILE_MOUSE:
 					state = STATE_DYING;
 				case TILE_EMPTY:
-					map.set_tile(new_x[min_direction], new_y[min_direction], TILE_CAT);
-					map.set_tile(x, y, TILE_EMPTY);
+					level.set_tile(new_x[min_direction], new_y[min_direction], TILE_CAT);
+					level.set_tile(x, y, TILE_EMPTY);
 
 					cats_x[cat_num] = new_x[min_direction];
 					cats_y[cat_num] = new_y[min_direction];
@@ -508,7 +424,7 @@ void Game::move_cat(u8 cat_num) {
 					break;
 
 				default:
-					distance[min_direction] = -1;
+					distances[min_direction] = -1;
 			}
 		}
 	}
@@ -517,7 +433,7 @@ void Game::move_cat(u8 cat_num) {
 void Game::destroy_cats() {
 	for (u8 i = 0; i < MAX_CATS; i++) {
 		if (cats_x[i] || cats_y[i]) {
-			map.set_tile(cats_x[i], cats_y[i], TILE_CHEESE);
+			level.set_tile(cats_x[i], cats_y[i], TILE_CHEESE);
 			cats_x[i] = 0;
 			cats_y[i] = 0;
 		}
@@ -543,3 +459,11 @@ void Game::update_lives() {
 		big_mouse_tile.draw(&screen_bottom, LIVES_X + (i * (big_mouse_tile.get_width() + 3)), LIVES_Y);
 	}
 }
+
+float distance(u8 x1, u8 y1, u8 x2, u8 y2) {
+	s16 dx = x2 - x1;
+	s16 dy = y2 - y1;
+
+	return sqrt(dx*dx + dy*dy);
+}
+

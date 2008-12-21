@@ -1,5 +1,4 @@
 #include <nds.h>
-#include <math.h>
 #include "canvas.h"
 #include "tile.h"
 #include "tilemap.h"
@@ -62,9 +61,3 @@ void TileMap::draw(u16 x, u16 y) const {
 	}
 }
 
-float TileMap::distance(u8 x1, u8 y1, u8 x2, u8 y2) {
-	s16 dx = x2 - x1;
-	s16 dy = y2 - y1;
-
-	return sqrt(dx*dx + dy*dy);
-}

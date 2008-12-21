@@ -6,14 +6,7 @@
 #include "font.h"
 #include "tile.h"
 #include "tilemap.h"
-
-const u8 NUM_TILES = 13;
-
-const u8 LEVEL_WIDTH = 23;
-const u8 LEVEL_HEIGHT = 23;
-
-const u8 TILE_WIDTH = 8;
-const u8 TILE_HEIGHT = 8;
+#include "level.h"
 
 const u8 NUM_LIVES = 3;
 
@@ -26,22 +19,6 @@ const u8 LIVES_X = 10;
 const u8 LIVES_Y = 15;
 
 const Color BACKGROUND_COLOR = RGB(23, 23, 23);
-
-enum {
-	TILE_EMPTY,
-	TILE_MOVABLE_BLOCK,
-	TILE_STATIONARY_BLOCK,
-	TILE_MOUSE,
-	TILE_CAT,
-	TILE_YARN,
-	TILE_MOUSE_TRAP,
-	TILE_SINK_HOLE,
-	TILE_CHEESE,
-	TILE_MOUSE_SINKHOLE,
-	TILE_BORDER_OPENING_VERTICAL,
-	TILE_BORDER_OPENING_HORIZONTAL,
-	TILE_CAT_SITTING
-};
 
 const u8 NUM_DIRECTIONS = 8;
 
@@ -70,13 +47,11 @@ class Game {
 	private:
 		Canvas *canvas;
 		Font *font;
-		TileMap map;
-		Tile tiles[NUM_TILES];
+		Level level;
 		Tile big_mouse_tile;
 		u8 mouse_x;
 		u8 mouse_y;
 		u8 lives;
-		u8 level;
 		u32 score;
 		PlayerState state;
 		u32 time_stuck_in_sinkhole;
@@ -102,6 +77,8 @@ class Game {
 		void update_score();
 		void update_lives();
 };
+
+float distance(u8 x1, u8 y1, u8 x2, u8 y2);
 
 #endif
 

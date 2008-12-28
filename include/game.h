@@ -68,6 +68,7 @@ class Game {
 		void handle_input(u32 input, u32 current_time);
 		void push_block(u8 x, u8 y);
 		void move_mouse(u8 x, u8 y);
+		void move_mouse_random();
 		void spawn_cats();
 		void spawn_single_cat();
 		void random_empty_tile(u8 *x, u8 *y);

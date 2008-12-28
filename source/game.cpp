@@ -57,6 +57,19 @@ void Game::play_level() {
 	Clock clock(&screen_bottom, (SCREEN_WIDTH - CLOCK_WIDTH) / 2, 10);
 	clock.draw();
 
+	switch (level.get_mouse_position()) {
+		case LEVEL_MOUSE_MIDDLE:
+			mouse_x = LEVEL_WIDTH / 2;
+			mouse_y = LEVEL_HEIGHT / 2;
+
+			level.set_tile(mouse_x, mouse_y, TILE_MOUSE);
+			break;
+
+		case LEVEL_MOUSE_RANDOM:
+			move_mouse_random();
+			break;
+	}
+
 	spawn_cats();
 
 	update_lives();
@@ -65,7 +78,6 @@ void Game::play_level() {
 	keysSetRepeat(15, 3);
 
 	done_level = false;
-
 	while (!done_level) {
 		scanKeys();
 		u32 keys_down = keysDownRepeat();
@@ -215,7 +227,7 @@ void Game::handle_input(u32 input, u32 current_time) {
 		}		
 	}
 
-	// Take screenshot (not for ordinairy users)
+	// Take screenshot (not for ordinary users)
 	u32 screenshot_key_combo = (KEY_L | KEY_R | KEY_A | KEY_B | KEY_X | KEY_Y | KEY_START | KEY_SELECT);
 	if ((keysHeld() & screenshot_key_combo) == screenshot_key_combo) {
 		while (keysHeld()) { scanKeys(); }
@@ -283,6 +295,18 @@ void Game::move_mouse(u8 x, u8 y) {
 
 	mouse_x = x;
 	mouse_y = y;
+}
+
+void Game::move_mouse_random() {
+	u8 random_x;
+	u8 random_y;
+
+	random_empty_tile(&random_x, &random_y);
+
+	level.set_tile(random_x, random_y, TILE_MOUSE);
+
+	mouse_x = random_x;
+	mouse_y = random_y;
 }
 
 void Game::spawn_cats() {

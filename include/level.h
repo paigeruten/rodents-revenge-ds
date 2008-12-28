@@ -44,12 +44,24 @@ enum LevelSize {
 	LEVEL_LARGE
 };
 
+enum LevelTile {
+	LEVEL_TILE_EMPTY = 0,
+	LEVEL_TILE_MOVABLE = 1,
+	LEVEL_TILE_STATIONARY = 2
+};
+
+enum LevelMouse {
+	LEVEL_MOUSE_MIDDLE,
+	LEVEL_MOUSE_RANDOM
+};
+
 typedef u8 LevelId;
 
 struct LevelProperties {
 	LevelId id;
 	LevelType type;
 	LevelSize size;
+	LevelMouse mouse;
 	u8 movable_block_density;
 	u8 stationary_block_density;
 	u8 yarn_density;
@@ -66,10 +78,11 @@ class Level {
 		// Accessors
 		void set_canvas(Canvas *new_canvas) { canvas = new_canvas; }
 		u8 get_num_levels() const { return num_levels; }
-		void set_current_level(LevelId new_current_level) { current_level = new_current_level; }
-		LevelId get_current_level() const { return current_level; }
+		void set_current_level(LevelId new_current_level) { current_level.id = new_current_level; }
+		LevelId get_current_level() const { return current_level.id; }
 		TileNum get_tile(u8 x, u8 y) const { return map.get_tile(x, y); }
 		void set_tile(u8 x, u8 y, TileNum num) { map.set_tile(x, y, num); }
+		LevelMouse get_mouse_position() const { return current_level.mouse; }
 
 		// Methods
 		void init(Canvas *the_canvas);
@@ -83,10 +96,11 @@ class Level {
 		TileMap map;
 		Tile tiles[NUM_TILES];
 		LevelProperties levels[MAX_LEVELS];
+		LevelProperties current_level;
 		u8 num_levels;
-		LevelId current_level;
 
 		void load_levels_from_file(const char *filename);
+		void load_map(const u8 data[LEVEL_HEIGHT][LEVEL_WIDTH]);
 };
 
 #endif

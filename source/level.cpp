@@ -413,8 +413,6 @@ void Level::load_levels_from_file(const char *filename) {
 }
 
 void Level::load_map(const u8 data[LEVEL_HEIGHT][LEVEL_WIDTH]) {
-	if (data[0][0] == LEVEL_TILE_EMPTY)while(1)while(1)while(1)while(1)while(1);
-
 	for (u8 i = 0; i < LEVEL_WIDTH; i++) {
 		for (u8 j = 0; j < LEVEL_HEIGHT; j++) {
 			switch (data[j][i]) {

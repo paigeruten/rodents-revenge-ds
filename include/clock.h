@@ -8,6 +8,9 @@ enum ClockState { CLOCK_STARTED, CLOCK_STOPPED };
 const u8 CLOCK_WIDTH = 29;
 const u8 CLOCK_HEIGHT = 32;
 
+const u8 CLOCK_X = (SCREEN_WIDTH - CLOCK_WIDTH) / 2;
+const u8 CLOCK_Y = 10;
+
 const float SECOND_HAND_RADIUS = 9.0;
 const float MINUTE_HAND_RADIUS = 9.0;
 const float BLUE_HAND_RADIUS = 5.0;

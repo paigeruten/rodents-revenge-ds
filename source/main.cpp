@@ -45,6 +45,8 @@ int main(void) {
 	irqInit();
 	irqEnable(IRQ_VBLANK);
 
+	keysSetRepeat(15, 3);
+
 	init_screens();
 
 	screen_top.clear(RGB(31, 31, 31));

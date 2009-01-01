@@ -14,6 +14,8 @@ enum GameSpeed {
 const LevelId DEFAULT_START_LEVEL = 1;
 const GameSpeed DEFAULT_SPEED = SPEED_FAST;
 
+const char DATA_DIRECTORY[] = "/data/rodents-revenge/";
+
 class Options {
 	public:
 		// Constructors
@@ -25,6 +27,9 @@ class Options {
 		void set_start_level(LevelId new_start_level) { start_level = new_start_level; }
 		GameSpeed get_speed() const { return speed; }
 		void set_speed(GameSpeed new_speed) { speed = new_speed; }
+
+		// Methods
+		const char *full_path(const char *relative_path) const;
 
 	private:
 		LevelId start_level;

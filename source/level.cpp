@@ -1,4 +1,5 @@
 #include <nds.h>
+#include "options.h"
 #include "level.h"
 
 const u8 LEVEL_SQUARE_SMALL[LEVEL_HEIGHT][LEVEL_WIDTH] = {
@@ -279,19 +280,19 @@ void Level::init(Canvas *the_canvas) {
 
 	map.init(canvas, LEVEL_WIDTH, LEVEL_HEIGHT, TILE_WIDTH, TILE_HEIGHT);
 
-	tiles[0].load_from_file("/data/rodents-revenge/tiles/empty.tile");
-	tiles[1].load_from_file("/data/rodents-revenge/tiles/movable_block.tile");
-	tiles[2].load_from_file("/data/rodents-revenge/tiles/stationary_block.tile");
-	tiles[3].load_from_file("/data/rodents-revenge/tiles/mouse.tile");
-	tiles[4].load_from_file("/data/rodents-revenge/tiles/cat.tile");
-	tiles[5].load_from_file("/data/rodents-revenge/tiles/yarn.tile");
-	tiles[6].load_from_file("/data/rodents-revenge/tiles/trap.tile");
-	tiles[7].load_from_file("/data/rodents-revenge/tiles/sinkhole.tile");
-	tiles[8].load_from_file("/data/rodents-revenge/tiles/cheese.tile");
-	tiles[9].load_from_file("/data/rodents-revenge/tiles/mouse_sinkhole.tile");
-	tiles[10].load_from_file("/data/rodents-revenge/tiles/border_opening_vertical.tile");
-	tiles[11].load_from_file("/data/rodents-revenge/tiles/border_opening_horizontal.tile");
-	tiles[12].load_from_file("/data/rodents-revenge/tiles/cat_sitting.tile");
+	tiles[0].load_from_file(options.full_path("tiles/empty.tile"));
+	tiles[1].load_from_file(options.full_path("tiles/movable_block.tile"));
+	tiles[2].load_from_file(options.full_path("tiles/stationary_block.tile"));
+	tiles[3].load_from_file(options.full_path("tiles/mouse.tile"));
+	tiles[4].load_from_file(options.full_path("tiles/cat.tile"));
+	tiles[5].load_from_file(options.full_path("tiles/yarn.tile"));
+	tiles[6].load_from_file(options.full_path("tiles/trap.tile"));
+	tiles[7].load_from_file(options.full_path("tiles/sinkhole.tile"));
+	tiles[8].load_from_file(options.full_path("tiles/cheese.tile"));
+	tiles[9].load_from_file(options.full_path("tiles/mouse_sinkhole.tile"));
+	tiles[10].load_from_file(options.full_path("tiles/border_opening_vertical.tile"));
+	tiles[11].load_from_file(options.full_path("tiles/border_opening_horizontal.tile"));
+	tiles[12].load_from_file(options.full_path("tiles/cat_sitting.tile"));
 
 	map.add_tile(&tiles[0], TILE_EMPTY);
 	map.add_tile(&tiles[1], TILE_MOVABLE_BLOCK);
@@ -307,7 +308,7 @@ void Level::init(Canvas *the_canvas) {
 	map.add_tile(&tiles[11], TILE_BORDER_OPENING_HORIZONTAL);
 	map.add_tile(&tiles[12], TILE_CAT_SITTING);
 
-	load_levels_from_file("/data/rodents-revenge/levels");
+	load_levels_from_file(options.full_path("levels"));
 }
 
 void Level::load() {

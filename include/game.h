@@ -11,14 +11,19 @@
 const u8 NUM_LIVES = 3;
 
 const u8 MAX_CATS = 32;
+const u8 MAX_CATS_TO_SPAWN = 3;
 
 const u8 SCORE_X = SCREEN_WIDTH - 55;
 const u8 SCORE_Y = 15;
+const Color SCORE_COLOR = RGB(0, 0, 0);
 
 const u8 LIVES_X = 10;
 const u8 LIVES_Y = 15;
+const u8 LIVES_SPACING = 3;
 
 const Color BACKGROUND_COLOR = RGB(23, 23, 23);
+
+const u8 SINKHOLE_TIME_LIMIT = 5;
 
 const u8 NUM_DIRECTIONS = 8;
 
@@ -33,7 +38,12 @@ enum Direction {
 	DIRECTION_NORTHWEST
 };
 
-enum PlayerState { STATE_NORMAL, STATE_SINKHOLE, STATE_DYING, STATE_FAST_FORWARD };
+enum PlayerState {
+	STATE_NORMAL,
+	STATE_SINKHOLE,
+	STATE_DYING,
+	STATE_FAST_FORWARD
+};
 
 class Game {
 	public:
@@ -78,8 +88,6 @@ class Game {
 		void update_score();
 		void update_lives();
 };
-
-float distance(u8 x1, u8 y1, u8 x2, u8 y2);
 
 #endif
 

@@ -11,6 +11,7 @@
 #include "tilemap.h"
 #include "clock.h"
 #include "level.h"
+#include "distance.h"
 #include "game.h"
 
 Game::Game(Canvas *the_canvas, Font *the_font) {
@@ -25,7 +26,7 @@ Game::Game(Canvas *the_canvas, Font *the_font) {
 	}
 
 	// This tile is used to display the number of lives
-	big_mouse_tile.load_from_file("/data/rodents-revenge/tiles/mouse_big.tile");
+	big_mouse_tile.load_from_file(options.full_path("tiles/mouse_big.tile"));
 }
 
 Game::~Game() {
@@ -51,10 +52,10 @@ void Game::play_level() {
 
 	state = STATE_NORMAL;
 
-	screen_top.clear(RGB(23, 23, 23));
-	screen_bottom.clear(RGB(23, 23, 23));
+	screen_top.clear(BACKGROUND_COLOR);
+	screen_bottom.clear(BACKGROUND_COLOR);
 
-	Clock clock(&screen_bottom, (SCREEN_WIDTH - CLOCK_WIDTH) / 2, 10);
+	Clock clock(&screen_bottom, CLOCK_X, CLOCK_Y);
 	clock.draw();
 
 	switch (level.get_mouse_position()) {
@@ -74,8 +75,6 @@ void Game::play_level() {
 
 	update_lives();
 	update_score();
-
-	keysSetRepeat(15, 3);
 
 	done_level = false;
 	while (!done_level) {
@@ -135,7 +134,7 @@ void Game::play_level() {
 void Game::wait_in_sinkhole(u32 current_time) {
 	s32 length_of_time_in_hole = current_time - time_stuck_in_sinkhole;
 
-	if (length_of_time_in_hole > options.get_speed() * 5) {
+	if (length_of_time_in_hole > options.get_speed() * SINKHOLE_TIME_LIMIT) {
 		state = STATE_NORMAL;
 		level.set_tile(mouse_x, mouse_y, TILE_MOUSE);
 	}
@@ -150,9 +149,6 @@ void Game::move_cats() {
 }
 
 void Game::die() {
-	u8 random_x;
-	u8 random_y;
-
 	lives--;
 	if (lives == 0) {
 		done_level = true;
@@ -163,6 +159,8 @@ void Game::die() {
 	// TODO: Play animation of mouse dying here.
 
 	// Randomly respawn mouse to new location
+	u8 random_x;
+	u8 random_y;
 	random_empty_tile(&random_x, &random_y);
 
 	mouse_x = random_x;
@@ -310,13 +308,9 @@ void Game::move_mouse_random() {
 }
 
 void Game::spawn_cats() {
-	spawn_single_cat();
+	u8 num_cats_to_spawn = rand() / (RAND_MAX / MAX_CATS_TO_SPAWN) + 1;
 
-	if (rand() <= RAND_MAX / 3) {
-		spawn_single_cat();
-	}
-
-	if (rand() <= RAND_MAX / 3) {
+	for (u8 i = 0; i < num_cats_to_spawn; i++) {
 		spawn_single_cat();
 	}
 }
@@ -343,8 +337,8 @@ void Game::spawn_single_cat() {
 
 void Game::random_empty_tile(u8 *x, u8 *y) {
 	// Find all possible empty tiles
-	u8 empty_tiles_x[512];
-	u8 empty_tiles_y[512];
+	u8 empty_tiles_x[LEVEL_WIDTH * LEVEL_HEIGHT];
+	u8 empty_tiles_y[LEVEL_WIDTH * LEVEL_HEIGHT];
 	u8 num_empty_tiles = 0;
 
 	for (u8 tile_x = 0; tile_x < LEVEL_WIDTH; tile_x++) {
@@ -400,6 +394,7 @@ void Game::move_cat(u8 cat_num) {
 	bool done = false;
 	while (!done) {
 		// Find the direction with the minimum distance.
+		// 256 is just a number that is higher than any possible distance.
 		float min_distance = 256;
 		Direction min_direction = DIRECTION_NORTH;
 		bool can_move = false;
@@ -472,22 +467,15 @@ void Game::destroy_cats() {
 void Game::update_score() {
 	char *score_str = strval(score);
 
-	screen_bottom.rect(SCORE_X, SCORE_Y, SCORE_X + 50, SCORE_Y + font->get_font_height(), BACKGROUND_COLOR, RECT_FILLED);
-	font->print_string(score_str, SCORE_X, SCORE_Y, &screen_bottom, RGB(0, 0, 0));
+	screen_bottom.rect(SCORE_X, SCORE_Y, SCORE_X + font->string_width("00000"), SCORE_Y + font->get_font_height(), BACKGROUND_COLOR, RECT_FILLED);
+	font->print_string(score_str, SCORE_X, SCORE_Y, &screen_bottom, SCORE_COLOR);
 }
 
 void Game::update_lives() {
-	screen_bottom.rect(LIVES_X, LIVES_Y, LIVES_X + ((big_mouse_tile.get_width() + 3) * NUM_LIVES), LIVES_Y + big_mouse_tile.get_height(), BACKGROUND_COLOR, RECT_FILLED);
+	screen_bottom.rect(LIVES_X, LIVES_Y, LIVES_X + ((big_mouse_tile.get_width() + LIVES_SPACING) * NUM_LIVES), LIVES_Y + big_mouse_tile.get_height(), BACKGROUND_COLOR, RECT_FILLED);
 
 	for (u8 i = 0; i < lives; i++) {
-		big_mouse_tile.draw(&screen_bottom, LIVES_X + (i * (big_mouse_tile.get_width() + 3)), LIVES_Y);
+		big_mouse_tile.draw(&screen_bottom, LIVES_X + (i * (big_mouse_tile.get_width() + LIVES_SPACING)), LIVES_Y);
 	}
-}
-
-float distance(u8 x1, u8 y1, u8 x2, u8 y2) {
-	s16 dx = x2 - x1;
-	s16 dy = y2 - y1;
-
-	return sqrt(dx*dx + dy*dy);
 }
 

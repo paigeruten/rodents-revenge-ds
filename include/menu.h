@@ -4,7 +4,9 @@
 #include "canvas.h"
 #include "button.h"
 
-const u8 MAX_BUTTONS = 10;
+const u8 MAX_BUTTONS = 32;
+
+const Color MENU_DEFAULT_BACKGROUND_COLOR = RGB(31, 31, 31);
 
 class Menu {
 	public:

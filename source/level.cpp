@@ -308,7 +308,7 @@ void Level::init(Canvas *the_canvas) {
 	map.add_tile(&tiles[11], TILE_BORDER_OPENING_HORIZONTAL);
 	map.add_tile(&tiles[12], TILE_CAT_SITTING);
 
-	load_levels_from_file(options.full_path("levels");
+	load_levels_from_file(options.full_path("levels"));
 }
 
 void Level::load() {
@@ -374,7 +374,7 @@ void Level::load() {
 	}
 }
 
-bool Level::last() {
+bool Level::is_last() {
 	LevelId last = 0;
 
 	for (u8 i = 0; i < num_levels; i++) {
@@ -387,7 +387,7 @@ bool Level::last() {
 }
 
 void Level::next() {
-	if (!last()) {
+	if (!is_last()) {
 		for (u8 i = 0; i < num_levels; i++) {
 			if (levels[i].id == current_level.id) {
 				current_level = levels[i + 1];

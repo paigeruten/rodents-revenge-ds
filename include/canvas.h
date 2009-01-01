@@ -3,8 +3,10 @@
 
 #include "color.h"
 
-const bool RECT_FILLED = true;
-const bool RECT_OUTLINE = false;
+enum RectType {
+	RECT_FILLED,
+	RECT_OUTLINE
+};
 
 class Canvas {
 	public:
@@ -21,7 +23,7 @@ class Canvas {
 
 		// Methods
 		void plot(u32 x, u32 y, Color color) { data[x + y * width] = color; }
-		void rect(u32 upper_left_x, u32 upper_left_y, u32 lower_right_x, u32 lower_right_y, Color color, bool filled);
+		void rect(u32 upper_left_x, u32 upper_left_y, u32 lower_right_x, u32 lower_right_y, Color color, RectType type);
 		void copy(Canvas *destination, u32 x, u32 y);
 		void copy(Canvas *destination);
 		void clear(Color color);

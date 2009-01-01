@@ -26,7 +26,7 @@ Canvas::~Canvas() {
 	}
 }
 
-void Canvas::rect(u32 upper_left_x, u32 upper_left_y, u32 lower_right_x, u32 lower_right_y, Color color, bool filled) {
+void Canvas::rect(u32 upper_left_x, u32 upper_left_y, u32 lower_right_x, u32 lower_right_y, Color color, RectType type) {
 	// Don't try to print the box if it's completely out of range of the canvas.
 	if (upper_left_x >= width || upper_left_y >= height) {
 		return;
@@ -40,24 +40,28 @@ void Canvas::rect(u32 upper_left_x, u32 upper_left_y, u32 lower_right_x, u32 low
 		lower_right_y = height - 1;
 	}
 
-	if (filled) {
-		// Draw a filled-in rectangle.
-		for (u32 put_x = upper_left_x; put_x <= lower_right_x; put_x++) {
-			for (u32 put_y = upper_left_y; put_y <= lower_right_y; put_y++) {
-				plot(put_x, put_y, color);
+	switch (type) {
+		case RECT_FILLED:
+			// Draw a filled-in rectangle.
+			for (u32 put_x = upper_left_x; put_x <= lower_right_x; put_x++) {
+				for (u32 put_y = upper_left_y; put_y <= lower_right_y; put_y++) {
+					plot(put_x, put_y, color);
+				}
 			}
-		}
-	} else {
-		// Only draw an outline of the rectangle.
-		for (u32 put_x = upper_left_x; put_x <= lower_right_x; put_x++) {
-			plot(put_x, upper_left_y, color);
-			plot(put_x, lower_right_y, color);
-		}
+			break;
 
-		for (u32 put_y = upper_left_y; put_y <= lower_right_y; put_y++) {
-			plot(upper_left_x, put_y, color);
-			plot(lower_right_x, put_y, color);
-		}
+		case RECT_OUTLINE:
+			// Only draw an outline of the rectangle.
+			for (u32 put_x = upper_left_x; put_x <= lower_right_x; put_x++) {
+				plot(put_x, upper_left_y, color);
+				plot(put_x, lower_right_y, color);
+			}
+
+			for (u32 put_y = upper_left_y; put_y <= lower_right_y; put_y++) {
+				plot(upper_left_x, put_y, color);
+				plot(lower_right_x, put_y, color);
+			}
+			break;
 	}
 }
 
@@ -85,10 +89,14 @@ void Canvas::copy(Canvas *destination, u32 x, u32 y) {
 	u32 get_y;
 	u32 put_y;
 
-	for (put_x = x, get_x = 0; put_x < right_limit; put_x++, get_x++) {
-		for (put_y = y, get_y = 0; put_y < bottom_limit; put_y++, get_y++) {
+	get_x = 0;
+	for (put_x = x; put_x < right_limit; put_x++) {
+		get_y = 0;
+		for (put_y = y; put_y < bottom_limit; put_y++) {
 			dest_data[put_x + put_y * dest_width] = data[get_x + get_y * width];
+			get_y++;
 		}
+		get_x++;
 	}
 }
 

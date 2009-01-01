@@ -6,116 +6,15 @@
 #include "str.h"
 
 Font::Font(const char *font_filename) {
-	font = 0;
+	font = NULL;
 	status = load_font(font_filename);
 }
 
 Font::~Font() {
 	if (font) {
 		delete [] font;
-		font = 0;
+		font = NULL;
 	}
-}
-
-FontStatus Font::load_font(const char *filename) {
-	char line[8];
-	char char_value;
-	s32 num_value;
-	s32 i;
-	bool valid_number;
-
-	FILE *fontfile = fopen(filename, "r");
-
-	if (!fontfile) {
-		return FONT_ERR_FILE_NOT_FOUND;
-	}
-
-	// Get font width
-	fgets(line, sizeof(line), fontfile);
-	chop(line);
-	valid_number = intval(line, &num_value);
-	if (!valid_number || num_value < 0) { fclose(fontfile); return FONT_ERR_INVALID_FONT_FILE; }
-	font_width = num_value;
-
-	// Get font height
-	fgets(line, sizeof(line), fontfile);
-	chop(line);
-	valid_number = intval(line, &num_value);
-	if (!valid_number || num_value < 0) { fclose(fontfile); return FONT_ERR_INVALID_FONT_FILE; }
-	font_height = num_value;
-
-	// Get space between chars
-	fgets(line, sizeof(line), fontfile);
-	chop(line);
-	valid_number = intval(line, &num_value);
-	if (!valid_number || num_value < 0) { fclose(fontfile); return FONT_ERR_INVALID_FONT_FILE; }
-	space_between_chars = num_value;
-
-	// Skip a line
-	fgets(line, sizeof(line), fontfile);
-
-	// Get font_widths[] values
-	for (i = 0; i < NUM_CHARS; i++) {
-		fgets(line, sizeof(line), fontfile);
-		chop(line);
-		valid_number = intval(line, &num_value);
-		if (!valid_number || num_value < 0) { fclose(fontfile); return FONT_ERR_INVALID_FONT_FILE; }
-		font_widths[i] = num_value;
-	}
-
-	// Skip a line
-	fgets(line, sizeof(line), fontfile);
-
-	// If a font was already loaded, delete the memory
-	if (font) {
-		delete [] font;
-		font = 0;
-	}
-
-	// Allocate memory for font data
-	font = new u8 [font_width * font_height * NUM_CHARS];
-	if (font == 0) { fclose(fontfile); return FONT_ERR_ALLOC_MEMORY; }
-
-	// For the rest of the file, copy each '1' and '0' encountered to the font[] array.
-	// The i variable will keep track of how many characters have been copied so far.
-	i = 0;
-	char_value = fgetc(fontfile);
-	while (!feof(fontfile)) {
-		if (char_value == '0' || char_value == '1') {
-			// Make sure we aren't past the amount of memory we allocated.
-			if (i == font_width * font_height * NUM_CHARS) {
-				fclose(fontfile);
-				fontfile = 0;
-				delete [] font;
-				font = 0;
-				return FONT_ERR_INVALID_FONT_FILE;
-			}
-
-			switch (char_value) {
-				case '0': font[i] = 0; break;
-				case '1': font[i] = 1; break;
-
-				default:;
-			}
-
-			i++;
-		}
-
-		char_value = fgetc(fontfile);
-	}
-
-	// Make sure we got enough font data.
-	if (i != font_width * font_height * NUM_CHARS) {
-		fclose(fontfile);
-		fontfile = 0;
-		delete [] font;
-		font = 0;
-		return FONT_ERR_INVALID_FONT_FILE;
-	}
-
-	fclose(fontfile);
-
-	return FONT_OK;
 }
 
 void Font::print_char(char character, u16 x, u16 y, Canvas *canvas, Color color, Color bgcolor) const {
@@ -178,5 +77,119 @@ u32 Font::string_width(const char *string) const {
 	width -= space_between_chars;
 	
 	return width;
+}
+
+s32 Font::get_num_from_file(FILE *fh) {
+	char line[8];
+	bool valid_number;
+	s32 num_value;
+
+	fgets(line, sizeof(line), fh);
+	chop(line);
+	valid_number = intval(line, &num_value);
+
+	if (!valid_number || num_value < 0) {
+		return -1;
+	}
+
+	return num_value;
+}
+
+void Font::skip_line_in_file(FILE *fh) {
+	char current_char = '\0';
+
+	while (!feof(fh) && current_char != '\n') {
+		current_char = fgetc(fh);
+	}
+}
+
+FontStatus Font::load_font(const char *filename) {
+	char char_value;
+	s32 i;
+
+	FILE *fontfile = fopen(filename, "r");
+
+	if (!fontfile) {
+		return FONT_ERR_FILE_NOT_FOUND;
+	}
+
+	// First three numbers in file are the font width, font height, and space between chars.
+	font_width = get_num_from_file(fontfile);
+	font_height = get_num_from_file(fontfile);
+	space_between_chars = get_num_from_file(fontfile);
+
+	if (font_width == -1 || font_height == -1 || space_between_chars == -1) {
+		fclose(fontfile);
+		return FONT_ERR_INVALID_FONT_FILE;
+	}
+
+	skip_line_in_file(fontfile);
+
+	// Get font_widths[] values
+	for (i = 0; i < NUM_CHARS; i++) {
+		font_widths[i] = get_num_from_file(fontfile);
+
+		if (font_widths[i] == -1) {
+			fclose(fontfile);
+			return FONT_ERR_INVALID_FONT_FILE;
+		}
+	}
+
+	skip_line_in_file(fontfile);
+
+	// If a font was already loaded, delete the memory
+	if (font != NULL) {
+		delete [] font;
+		font = NULL;
+	}
+
+	// Allocate memory for font data
+	font = new u8 [font_width * font_height * NUM_CHARS];
+
+	if (font == NULL) {
+		fclose(fontfile);
+		return FONT_ERR_ALLOC_MEMORY;
+	}
+
+	// For the rest of the file, copy each '1' and '0' encountered to the font[] array.
+	// The i variable will keep track of how many characters have been copied so far.
+	i = 0;
+	char_value = fgetc(fontfile);
+	while (!feof(fontfile)) {
+		if (char_value == '0' || char_value == '1') {
+			// Make sure we aren't past the amount of memory we allocated.
+			if (i == font_width * font_height * NUM_CHARS) {
+				fclose(fontfile);
+
+				delete [] font;
+				font = NULL;
+
+				return FONT_ERR_INVALID_FONT_FILE;
+			}
+
+			switch (char_value) {
+				case '0': font[i] = 0; break;
+				case '1': font[i] = 1; break;
+
+				default:;
+			}
+
+			i++;
+		}
+
+		char_value = fgetc(fontfile);
+	}
+
+	fclose(fontfile);
+
+	// Make sure we got enough font data.
+	if (i != font_width * font_height * NUM_CHARS) {
+		delete [] font;
+		font = NULL;
+
+		return FONT_ERR_INVALID_FONT_FILE;
+	}
+
+	return FONT_OK;
 }
 

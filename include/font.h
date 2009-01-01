@@ -1,6 +1,7 @@
 #ifndef _font_h
 #define _font_h
 
+#include <stdio.h>
 #include "color.h"
 #include "canvas.h"
 
@@ -21,9 +22,6 @@ class Font {
 		u8 get_font_height() const { return font_height; }
 		u8 get_font_width() const { return font_width; }
 
-		// Load font from file (the constructor calls this)
-		FontStatus load_font(const char *filename);
-
 		// Printing characters/strings/numbers
 		void print_char(char character, u16 x, u16 y, Canvas *canvas, Color color = RGB(0, 0, 0), Color bgcolor = TRANSPARENT) const;
 		void print_string(const char *string, u16 x, u16 y, Canvas *canvas, Color color = RGB(0, 0, 0), Color bgcolor = TRANSPARENT) const;
@@ -36,11 +34,15 @@ class Font {
 
 	private:
 		u8 *font;
-		u8 font_widths[NUM_CHARS];
-		u8 space_between_chars;
-		u8 font_height;
-		u8 font_width;
+		s8 font_widths[NUM_CHARS];
+		s8 space_between_chars;
+		s8 font_height;
+		s8 font_width;
 		FontStatus status;
+
+		s32 get_num_from_file(FILE *fh);
+		void skip_line_in_file(FILE *fh);
+		FontStatus load_font(const char *filename);
 };
 
 #endif

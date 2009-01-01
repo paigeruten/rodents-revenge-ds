@@ -308,7 +308,7 @@ void Level::init(Canvas *the_canvas) {
 	map.add_tile(&tiles[11], TILE_BORDER_OPENING_HORIZONTAL);
 	map.add_tile(&tiles[12], TILE_CAT_SITTING);
 
-	load_levels_from_file(options.full_path("levels"));
+	load_levels_from_file(options.full_path("levels");
 }
 
 void Level::load() {

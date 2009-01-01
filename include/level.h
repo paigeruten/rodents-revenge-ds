@@ -56,17 +56,18 @@ enum LevelMouse {
 };
 
 typedef u8 LevelId;
+typedef u8 LevelDensity;
 
 struct LevelProperties {
 	LevelId id;
 	LevelType type;
 	LevelSize size;
 	LevelMouse mouse;
-	u8 movable_block_density;
-	u8 stationary_block_density;
-	u8 yarn_density;
-	u8 trap_density;
-	u8 sinkhole_density;
+	LevelDensity movable_block_density;
+	LevelDensity stationary_block_density;
+	LevelDensity yarn_density;
+	LevelDensity trap_density;
+	LevelDensity sinkhole_density;
 };
 
 class Level {
@@ -87,7 +88,7 @@ class Level {
 		// Methods
 		void init(Canvas *the_canvas);
 		void load();
-		bool last();
+		bool is_last();
 		void next();
 		void draw(u16 x, u16 y) const { map.draw(x, y); }
 

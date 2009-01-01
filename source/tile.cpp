@@ -5,14 +5,14 @@
 #include "str.h"
 
 Tile::Tile() {
-	data = 0;
+	data = NULL;
 	width = 0;
 	height = 0;
 	status = TILE_NOT_LOADED;
 }
 
 Tile::Tile(const char *filename) {
-	data = 0;
+	data = NULL;
 	width = 0;
 	height = 0;
 
@@ -22,7 +22,7 @@ Tile::Tile(const char *filename) {
 Tile::~Tile() {
 	if (data) {
 		delete [] data;
-		data = 0;
+		data = NULL;
 	}
 }
 

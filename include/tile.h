@@ -4,7 +4,12 @@
 #include "color.h"
 #include "canvas.h"
 
-enum TileStatus { TILE_OK, TILE_NOT_LOADED, TILE_FILE_NOT_FOUND, TILE_INVALID_FILE };
+enum TileStatus {
+	TILE_OK,
+	TILE_NOT_LOADED,
+	TILE_FILE_NOT_FOUND,
+	TILE_INVALID_FILE
+};
 
 class Tile {
 	public:

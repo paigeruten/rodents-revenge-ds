@@ -403,9 +403,9 @@ void Level::load_levels_from_file(const char *filename) {
 	current_level.id = 1;
 
 	levels[0].id = 1;
-	levels[0].type = LEVEL_STATIONARY_CHECKERBOARD;
+	levels[0].type = LEVEL_SQUARE;
 	levels[0].size = LEVEL_MEDIUM;
-	levels[0].mouse = LEVEL_MOUSE_RANDOM;
+	levels[0].mouse = LEVEL_MOUSE_MIDDLE;
 	levels[0].movable_block_density = 0;
 	levels[0].stationary_block_density = 0;
 	levels[0].yarn_density = 0;

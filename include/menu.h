@@ -16,12 +16,18 @@ class Menu {
 		~Menu();
 
 		// Accessors
+		Canvas *get_canvas() const { return canvas; }
+		Font *get_font() const { return font; }
 		void set_background_color(Color new_bgcolor) { background_color = new_bgcolor; }
 		void set_button_widths(u16 new_button_widths) { button_widths = new_button_widths; }
 		u16 get_button_widths() const { return button_widths; }
 		void set_button_heights(u16 new_button_heights) { button_heights = new_button_heights; }
 		u16 get_button_heights() const { return button_heights; }
 		void set_button_colors(ButtonColors colors, ButtonColors pressed_colors) { button_colors = colors; button_pressed_colors = pressed_colors; }
+		ButtonColors get_button_colors() const { return button_colors; }
+		ButtonColors get_button_pressed_colors() const { return button_pressed_colors; }
+		Button *get_button(u8 button_id) { return buttons[button_id]; }
+		void set_button(u8 button_id, Button *button) { buttons[button_id] = button; }
 
 		// Methods
 		void init(Canvas *the_canvas, Font *the_font, Color background);

@@ -4,11 +4,11 @@
 #include "level.h"
 
 enum GameSpeed {
-	SPEED_SNAIL = 120,
-	SPEED_SLOW = 60,
-	SPEED_MEDIUM = 30,
-	SPEED_FAST = 18,
-	SPEED_BLAZING = 12
+	SPEED_SNAIL = 60,
+	SPEED_SLOW = 30,
+	SPEED_MEDIUM = 15,
+	SPEED_FAST = 8,
+	SPEED_BLAZING = 5
 };
 
 const LevelId DEFAULT_START_LEVEL = 1;

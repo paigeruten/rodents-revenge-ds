@@ -27,7 +27,7 @@ Keyboard::Keyboard(const char *filename, Canvas *the_canvas, Font *the_font, u8 
 Keyboard::~Keyboard() {
 }
 
-char Keyboard::key_pressed(u16 stylus_x, u16 stylus_y) {
+char Keyboard::key_pressed(touchPosition stylus) {
 	// Use alternate keyboard if they are holding shift
 	u8 which_keyboard;
 	if (shift) {
@@ -72,17 +72,17 @@ char Keyboard::key_pressed(u16 stylus_x, u16 stylus_y) {
 				}
 
 				key_pressed = ((keysHeld() & KEY_TOUCH) &&
-				               stylus_x >= key_left &&
-				               stylus_x < key_right &&
-				               stylus_y >= key_top &&
-				               stylus_y < key_bottom);
+				               stylus.px >= key_left &&
+				               stylus.px < key_right &&
+				               stylus.py >= key_top &&
+				               stylus.py < key_bottom);
 
 				if (key_pressed) {
 					print_key(current_key, current_key_x, current_key_y, KEY_HIGHLIGHTED);
 					the_pressed_key = current_key;
 				} else {
 					// The currently highlighted key is not pressed so unhighlight it.
-					print_key(current_key, current_key_x, current_key_y, !KEY_HIGHLIGHTED);
+					print_key(current_key, current_key_x, current_key_y, KEY_UNHIGHLIGHTED);
 				}
 
 				current_key_x += key_width;

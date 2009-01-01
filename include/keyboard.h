@@ -5,7 +5,10 @@
 #include "canvas.h"
 #include "font.h"
 
-enum KeyboardStatus { KEYBOARD_OK, KEYBOARD_FILE_NOT_FOUND };
+enum KeyboardStatus {
+	KEYBOARD_OK,
+	KEYBOARD_FILE_NOT_FOUND
+};
 
 struct KeyboardColors {
 	Color line;
@@ -21,6 +24,7 @@ const char KEYBOARD_NEW_ROW = 5;
 
 // This gets passed to the print_key() function.
 const bool KEY_HIGHLIGHTED = true;
+const bool KEY_UNHIGHLIGHTED = false;
 
 class Keyboard {
 	public:
@@ -29,7 +33,7 @@ class Keyboard {
 		~Keyboard();
 
 		// Returns key that is currently pressed, and highlights/unhighlights it
-		char key_pressed(u16 stylus_x, u16 stylus_y);
+		char key_pressed(touchPosition stylus);
 
 		// Load keyboard layout from file
 		KeyboardStatus load_keyboard(const char *filename);

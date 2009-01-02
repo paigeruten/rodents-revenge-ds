@@ -1,5 +1,7 @@
 #include <nds.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 #include "level.h"
 #include "options.h"
 
@@ -404,19 +406,91 @@ void Level::next() {
 }
 
 void Level::load_levels_from_file(const char *filename) {
-	// Temporarily hardcoded for testing
-	num_levels = 1;
-	current_level.id = 1;
+	FILE *fh = fopen(filename, "r");
 
-	levels[0].id = 1;
-	levels[0].type = LEVEL_SQUARE;
-	levels[0].size = LEVEL_MEDIUM;
-	levels[0].mouse = LEVEL_MOUSE_MIDDLE;
-	levels[0].movable_block_density = 0;
-	levels[0].stationary_block_density = 20;
-	levels[0].yarn_density = 0;
-	levels[0].trap_density = 3;
-	levels[0].sinkhole_density = 5;
+	if (!fh) {
+		return;
+	}
+
+	num_levels = 0;
+	LevelProperties level = DEFAULT_LEVEL_PROPERTIES;
+
+	while (!feof(fh)) {
+		char line[256];
+		fgets(line, sizeof(line), fh);
+
+		char *equals_sign_pos = strchr(line, '=');
+		char *newline_pos = strchr(line, '\n');
+
+		if (equals_sign_pos != NULL) {
+			*equals_sign_pos = '\0';
+			*newline_pos = '\0';
+
+			char *property_name = line;
+			char *value_name = (equals_sign_pos + 1);
+
+			s32 int_value;
+
+			if (!strcmp(property_name, "level")) {
+				if (intval(value_name, &int_value)) {
+					level.id = int_value;
+				}
+			} else if (!strcmp(property_name, "type")) {
+				if (!strcmp(value_name, "square")) {
+					level.type = LEVEL_SQUARE;
+				} else if (!strcmp(value_name, "scattered")) {
+					level.type = LEVEL_SCATTERED;
+				} else if (!strcmp(value_name, "movable_checkerboard")) {
+					level.type = LEVEL_MOVABLE_CHECKERBOARD;
+				} else if (!strcmp(value_name, "stationary_checkerboard")) {
+					level.type = LEVEL_STATIONARY_CHECKERBOARD;
+				}
+			} else if (!strcmp(property_name, "size")) {
+				if (!strcmp(value_name, "small")) {
+					level.size = LEVEL_SMALL;
+				} else if (!strcmp(value_name, "medium")) {
+					level.size = LEVEL_MEDIUM;
+				} else if (!strcmp(value_name, "large")) {
+					level.size = LEVEL_LARGE;
+				}
+			} else if (!strcmp(property_name, "max_cats_spawn")) {
+				if (intval(value_name, &int_value)) {
+					level.max_cats_spawn = int_value;
+				}
+			} else if (!strcmp(property_name, "movable_block_density")) {
+				if (intval(value_name, &int_value)) {
+					level.movable_block_density = int_value;
+				}
+			} else if (!strcmp(property_name, "stationary_block_density")) {
+				if (intval(value_name, &int_value)) {
+					level.stationary_block_density = int_value;
+				}
+			} else if (!strcmp(property_name, "trap_density")) {
+				if (intval(value_name, &int_value)) {
+					level.trap_density = int_value;
+				}
+			} else if (!strcmp(property_name, "sinkhole_density")) {
+				if (intval(value_name, &int_value)) {
+					level.sinkhole_density = int_value;
+				}
+			} else if (!strcmp(property_name, "yarn")) {
+				if (!strcmp(value_name, "true")) {
+					level.yarn = true;
+				} else if (!strcmp(value_name, "false")) {
+					level.yarn = false;
+				}
+			}
+		} else if (!strcmp(line, "---\n")) {
+			levels[num_levels] = level;
+			num_levels++;
+
+			level = DEFAULT_LEVEL_PROPERTIES;
+		}
+	}
+
+	set_current_level(levels[0].id);
+
+	fclose(fh);
 }
 
 void Level::load_map(const u8 data[LEVEL_HEIGHT][LEVEL_WIDTH]) {

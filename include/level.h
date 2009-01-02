@@ -50,11 +50,6 @@ enum LevelTile {
 	LEVEL_TILE_STATIONARY = 2
 };
 
-enum LevelMouse {
-	LEVEL_MOUSE_MIDDLE,
-	LEVEL_MOUSE_RANDOM
-};
-
 typedef u8 LevelId;
 typedef u8 LevelDensity;
 
@@ -62,12 +57,21 @@ struct LevelProperties {
 	LevelId id;
 	LevelType type;
 	LevelSize size;
-	LevelMouse mouse;
+	u8 max_cats_spawn;
 	LevelDensity movable_block_density;
 	LevelDensity stationary_block_density;
-	LevelDensity yarn_density;
 	LevelDensity trap_density;
 	LevelDensity sinkhole_density;
+	bool yarn;
+};
+
+const LevelProperties DEFAULT_LEVEL_PROPERTIES = {
+	0,                    // id
+	LEVEL_SCATTERED,      // type
+	LEVEL_MEDIUM,         // size
+	3,                    // max_cats_spawn
+	0, 0, 0, 0,           // x_density
+	true                  // yarn
 };
 
 class Level {
@@ -81,9 +85,9 @@ class Level {
 		u8 get_num_levels() const { return num_levels; }
 		void set_current_level(LevelId new_current_level) { current_level.id = new_current_level; }
 		LevelId get_current_level() const { return current_level.id; }
+		LevelProperties get_level(u8 index) { return levels[index]; }
 		TileNum get_tile(u8 x, u8 y) const { return map.get_tile(x, y); }
 		void set_tile(u8 x, u8 y, TileNum num) { map.set_tile(x, y, num); }
-		LevelMouse get_mouse_position() const { return current_level.mouse; }
 
 		// Methods
 		void init(Canvas *the_canvas);

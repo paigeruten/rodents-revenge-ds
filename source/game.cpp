@@ -49,18 +49,9 @@ void Game::play_level() {
 	Clock clock(&screen_bottom, CLOCK_X, CLOCK_Y);
 	clock.draw();
 
-	switch (level.get_mouse_position()) {
-		case LEVEL_MOUSE_MIDDLE:
-			mouse_x = LEVEL_WIDTH / 2;
-			mouse_y = LEVEL_HEIGHT / 2;
-
-			level.set_tile(mouse_x, mouse_y, TILE_MOUSE);
-			break;
-
-		case LEVEL_MOUSE_RANDOM:
-			move_mouse_random();
-			break;
-	}
+	mouse_x = LEVEL_WIDTH / 2;
+	mouse_y = LEVEL_HEIGHT / 2;
+	level.set_tile(mouse_x, mouse_y, TILE_MOUSE);
 
 	spawn_cats();
 
@@ -342,7 +333,7 @@ void Game::random_empty_tile(u8 *x, u8 *y) {
 		}
 	}
 
-	u16 random_tile = rand() % num_empty_tiles;
+	u16 random_tile = rand() / (RAND_MAX / num_empty_tiles);
 
 	*x = empty_tiles_x[random_tile];
 	*y = empty_tiles_y[random_tile];

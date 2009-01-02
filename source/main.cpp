@@ -6,6 +6,7 @@
 #include "game.h"
 #include "options.h"
 #include "radiomenu.h"
+#include "level.h"
 
 const ButtonColors BUTTON_COLORS = { RGB(2, 6, 10), RGB(2, 8, 14), RGB(27, 12, 0) };
 const ButtonColors BUTTON_PRESSED_COLORS = { RGB(2, 6, 10), RGB(27, 12, 0), RGB(2, 8, 14) };
@@ -88,6 +89,26 @@ int main(void) {
 
 	// Init font
 	Font font(options.full_path("fonts/sans.font"));
+
+	// Debug levels
+	Level level;
+	level.init(&screen_top);
+
+	for (u8 i = 0; i < level.get_num_levels(); i++) {
+		screen_top.clear(RGB(31, 31, 31));
+
+		font.print_number((level.get_level(i)).id, 5, 5, &screen_top, RGB(0, 0, 0));
+		font.print_number((level.get_level(i)).type, 5, 20, &screen_top, RGB(0, 0, 0));
+		font.print_number((level.get_level(i)).size, 5, 35, &screen_top, RGB(0, 0, 0));
+		font.print_number((level.get_level(i)).max_cats_spawn, 5, 50, &screen_top, RGB(0, 0, 0));
+		font.print_number((level.get_level(i)).movable_block_density, 5, 65, &screen_top, RGB(0, 0, 0));
+		font.print_number((level.get_level(i)).stationary_block_density, 5, 80, &screen_top, RGB(0, 0, 0));
+		font.print_number((level.get_level(i)).trap_density, 5, 95, &screen_top, RGB(0, 0, 0));
+		font.print_number((level.get_level(i)).sinkhole_density, 5, 110, &screen_top, RGB(0, 0, 0));
+		font.print_number((level.get_level(i)).yarn, 5, 125, &screen_top, RGB(0, 0, 0));
+
+		while (keysHeld()) { scanKeys(); } while (!keysHeld()) { scanKeys(); } while (keysHeld()) { scanKeys(); }
+	}
 
 	// Create menus
 	MenuSet menu(&screen_bottom, &font, MENU_BACKGROUND_COLOR);

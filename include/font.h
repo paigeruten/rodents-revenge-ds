@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include "color.h"
 #include "canvas.h"
+#include "str.h"
 
 enum FontStatus { FONT_OK, FONT_ERR_FILE_NOT_FOUND, FONT_ERR_INVALID_FONT_FILE, FONT_ERR_ALLOC_MEMORY };
 

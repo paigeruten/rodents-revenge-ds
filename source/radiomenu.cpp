@@ -1,5 +1,4 @@
 #include <nds.h>
-#include "menu.h"
 #include "radiomenu.h"
 
 RadioMenu::RadioMenu(Canvas *the_canvas, Font *the_font, Color background) :

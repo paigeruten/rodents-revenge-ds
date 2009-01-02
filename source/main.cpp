@@ -2,13 +2,10 @@
 #include <fat.h>
 #include "canvas.h"
 #include "font.h"
-#include "keyboard.h"
-#include "menu.h"
 #include "menuset.h"
 #include "game.h"
 #include "options.h"
 #include "radiomenu.h"
-#include "actionmenu.h"
 
 const ButtonColors BUTTON_COLORS = { RGB(2, 6, 10), RGB(2, 8, 14), RGB(27, 12, 0) };
 const ButtonColors BUTTON_PRESSED_COLORS = { RGB(2, 6, 10), RGB(27, 12, 0), RGB(2, 8, 14) };
@@ -108,15 +105,15 @@ int main(void) {
 	menu.add_button(MAIN_MENU, "Options", OPTIONS_MENU);
 
 	menu.add_button(OPTIONS_MENU, "Back", MAIN_MENU);
-	menu.add_button(OPTIONS_MENU, "Change Starting Level", &blah, 0);
+	menu.add_button(OPTIONS_MENU, "Change Starting Level", &blah, NULL);
 	menu.add_button(OPTIONS_MENU, "Change Game Speed", &change_game_speed, (void *)&font);
 
 	menu.add_button(HIGH_SCORES_MENU, "Back", MAIN_MENU);
-	menu.add_button(HIGH_SCORES_MENU, "View High Scores", &blah, 0);
+	menu.add_button(HIGH_SCORES_MENU, "View High Scores", &blah, NULL);
 	menu.add_button(HIGH_SCORES_MENU, "Reset High Scores", RESET_HIGH_SCORES_MENU);
 
 	menu.add_button(RESET_HIGH_SCORES_MENU, "Back", HIGH_SCORES_MENU);
-	menu.add_button(RESET_HIGH_SCORES_MENU, "Confirm Reset", &blah, 0);
+	menu.add_button(RESET_HIGH_SCORES_MENU, "Confirm Reset", &blah, NULL);
 
 	menu.begin(MAIN_MENU);
 

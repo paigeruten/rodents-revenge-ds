@@ -1,6 +1,4 @@
 #include <nds.h>
-#include "canvas.h"
-#include "tile.h"
 #include "tilemap.h"
 
 TileMap::TileMap() {

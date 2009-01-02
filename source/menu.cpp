@@ -1,6 +1,4 @@
 #include <nds.h>
-#include "canvas.h"
-#include "button.h"
 #include "menu.h"
 
 Menu::Menu() {

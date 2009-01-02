@@ -1,7 +1,4 @@
 #include <nds.h>
-#include "canvas.h"
-#include "button.h"
-#include "menu.h"
 #include "actionmenu.h"
 
 ActionMenu::ActionMenu() {

@@ -1,8 +1,5 @@
 #include <nds.h>
 #include <string.h>
-#include "color.h"
-#include "canvas.h"
-#include "font.h"
 #include "button.h"
 
 Button::Button() {

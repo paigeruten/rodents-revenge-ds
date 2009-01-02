@@ -7,6 +7,9 @@
 #include "tile.h"
 #include "tilemap.h"
 #include "level.h"
+#include "options.h"
+#include "clock.h"
+#include "distance.h"
 
 const u8 NUM_LIVES = 3;
 

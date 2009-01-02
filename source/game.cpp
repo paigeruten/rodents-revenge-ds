@@ -3,15 +3,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
-#include "canvas.h"
-#include "font.h"
-#include "options.h"
-#include "str.h"
-#include "tile.h"
-#include "tilemap.h"
-#include "clock.h"
-#include "level.h"
-#include "distance.h"
 #include "game.h"
 
 Game::Game(Canvas *the_canvas, Font *the_font) {

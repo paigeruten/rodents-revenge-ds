@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "font.h"
-#include "str.h"
 
 Font::Font(const char *font_filename) {
 	font = NULL;

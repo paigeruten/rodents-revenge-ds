@@ -1,9 +1,6 @@
 #include <nds.h>
 #include <math.h>
 #include <stdlib.h>
-#include "color.h"
-#include "canvas.h"
-#include "options.h"
 #include "clock.h"
 
 const float PI = 3.14159;

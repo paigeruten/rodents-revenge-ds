@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <string.h>
 #include "tile.h"
-#include "str.h"
 
 Tile::Tile() {
 	data = NULL;

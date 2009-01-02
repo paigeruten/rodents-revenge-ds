@@ -3,6 +3,7 @@
 
 #include "color.h"
 #include "canvas.h"
+#include "str.h"
 
 enum TileStatus {
 	TILE_OK,

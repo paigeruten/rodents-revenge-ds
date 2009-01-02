@@ -1,6 +1,6 @@
 #include <nds.h>
-#include "options.h"
 #include "level.h"
+#include "options.h"
 
 const u8 LEVEL_SQUARE_SMALL[LEVEL_HEIGHT][LEVEL_WIDTH] = {
 	{ 2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2 },

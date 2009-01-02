@@ -2,6 +2,7 @@
 #define _clock_h
 
 #include "canvas.h"
+#include "options.h"
 
 enum ClockState { CLOCK_STARTED, CLOCK_STOPPED };
 

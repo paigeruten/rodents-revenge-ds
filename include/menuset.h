@@ -5,6 +5,7 @@
 #include "canvas.h"
 #include "font.h"
 #include "menu.h"
+#include "actionmenu.h"
 #include "button.h"
 
 const u8 MAX_MENUS = 32;
@@ -33,7 +34,7 @@ class MenuSet {
 	private:
 		Canvas *canvas;
 		Font *font;
-		Menu *menus[MAX_MENUS];
+		ActionMenu *menus[MAX_MENUS];
 		Color background_color;
 		u16 button_widths;
 		u16 button_heights;

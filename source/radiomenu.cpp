@@ -1,19 +1,11 @@
 #include <nds.h>
+#include "menu.h"
 #include "radiomenu.h"
 
-RadioMenu::RadioMenu() {
-	for (u8 i = 0; i < MAX_BUTTONS; i++) {
-		values[i] = 0;
-	}
-
-	selected_button = RADIOBUTTON_NONE_SELECTED;
-	back_button = RADIOBUTTON_NONE_SELECTED;
-}
-
-RadioMenu::RadioMenu(Canvas *the_canvas, Font *the_font, Color background):
+RadioMenu::RadioMenu(Canvas *the_canvas, Font *the_font, Color background) :
 Menu(the_canvas, the_font, background) {
 	for (u8 i = 0; i < MAX_BUTTONS; i++) {
-		values[i] = 0;
+		values[i] = -1;
 	}
 
 	selected_button = RADIOBUTTON_NONE_SELECTED;
@@ -46,35 +38,12 @@ void RadioMenu::set_selected_value(s32 value) {
 }
 
 void RadioMenu::add_back_button(const char *button_text) {
-	for (u8 i = 0; i < MAX_BUTTONS; i++) {
-		if (!get_button(i)) {
-			// Create button
-			set_button(i, new Button);
-			get_button(i)->init(get_canvas(), get_font(), button_text);
-			get_button(i)->set_colors(get_button_colors(), get_button_pressed_colors());
-			get_button(i)->set_width(get_button_widths());
-			get_button(i)->set_height(get_button_heights());
-
-			back_button = i;
-			break;
-		}
-	}
+	back_button = add_menu_button(button_text);
 }
 
 void RadioMenu::add_radio_button(const char *button_text, s32 value) {
-	for (u8 i = 0; i < MAX_BUTTONS; i++) {
-		if (!get_button(i)) {
-			// Create button
-			set_button(i, new Button);
-			get_button(i)->init(get_canvas(), get_font(), button_text);
-			get_button(i)->set_colors(get_button_colors(), get_button_pressed_colors());
-			get_button(i)->set_width(get_button_widths());
-			get_button(i)->set_height(get_button_heights());
-
-			values[i] = value;
-			break;
-		}
-	}
+	s8 button_id = add_menu_button(button_text);
+	values[button_id] = value;
 }
 
 s32 RadioMenu::select() {

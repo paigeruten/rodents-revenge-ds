@@ -7,7 +7,7 @@ MenuSet::MenuSet(Canvas *the_canvas, Font *the_font, Color background) {
 	background_color = background;
 
 	for (u8 i = 0; i < MAX_MENUS; i++) {
-		menus[i] = 0;
+		menus[i] = NULL;
 	}
 }
 
@@ -15,13 +15,13 @@ MenuSet::~MenuSet() {
 	for (u8 i = 0; i < MAX_MENUS; i++) {
 		if (menus[i]) {
 			delete menus[i];
-			menus[i] = 0;
+			menus[i] = NULL;
 		}
 	}
 }
 
 void MenuSet::begin(MenuId top_menu) {
-	Menu *current_menu = menus[top_menu];
+	ActionMenu *current_menu = menus[top_menu];
 
 	while (1) {
 		current_menu = current_menu->select();
@@ -31,7 +31,7 @@ void MenuSet::begin(MenuId top_menu) {
 MenuId MenuSet::add_menu() {
 	for (u8 i = 0; i < MAX_MENUS; i++) {
 		if (!menus[i]) {
-			menus[i] = new Menu;
+			menus[i] = new ActionMenu;
 			menus[i]->init(canvas, font, background_color);
 			menus[i]->set_button_widths(button_widths);
 			menus[i]->set_button_heights(button_heights);

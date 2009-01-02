@@ -10,7 +10,6 @@ const s8 RADIOBUTTON_NONE_SELECTED = -1;
 class RadioMenu : public Menu {
 	public:
 		// Constructors
-		RadioMenu();
 		RadioMenu(Canvas *the_canvas, Font *the_font, Color background);
 		~RadioMenu();
 
@@ -24,9 +23,10 @@ class RadioMenu : public Menu {
 		s32 select();
 
 	private:
-		s32 values[MAX_BUTTONS];
 		s8 selected_button;
 		s8 back_button;
+
+		s32 values[MAX_BUTTONS];
 };
 
 #endif

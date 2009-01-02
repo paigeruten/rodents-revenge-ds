@@ -15,7 +15,7 @@ Menu::~Menu() {
 	for (u8 i = 0; i < MAX_BUTTONS; i++) {
 		if (buttons[i]) {
 			delete buttons[i];
-			buttons[i] = 0;
+			buttons[i] = NULL;
 		}
 	}
 }
@@ -26,36 +26,7 @@ void Menu::init(Canvas *the_canvas, Font *the_font, Color background) {
 	background_color = background;
 
 	for (u8 i = 0; i < MAX_BUTTONS; i++) {
-		buttons[i] = 0;
-		actions[i] = 0;
-		actions_data[i] = 0;
-		submenus[i] = 0;
-	}
-}
-
-Menu *Menu::select() {
-	draw();
-
-	while (1) {
-		scanKeys();
-		touchPosition stylus = touchReadXY();
-
-		for (u8 i = 0; i < MAX_BUTTONS; i++) {
-			if (buttons[i]) {
-				if (buttons[i]->update(stylus) == BUTTON_CLICKED) {
-					if (submenus[i]) {
-						return submenus[i];
-					}
-
-					if (actions[i]) {
-						(*actions[i])(actions_data[i]);
-						draw();
-					}
-				}
-			}
-		}
-
-		swiWaitForVBlank();
+		buttons[i] = NULL;
 	}
 }
 
@@ -78,15 +49,7 @@ void Menu::draw() {
 	buffer.copy(canvas);
 }
 
-void Menu::add_button(const char *button_text, Menu *submenu) {
-	add_button(button_text, submenu, 0, 0);
-}
-
-void Menu::add_button(const char *button_text, void (*action)(void *), void *data) {
-	add_button(button_text, 0, action, data);
-}
-
-void Menu::add_button(const char *button_text, Menu *submenu, void (*action)(void *), void *data) {
+u8 Menu::add_menu_button(const char *button_text) {
 	for (u8 i = 0; i < MAX_BUTTONS; i++) {
 		if (!buttons[i]) {
 			// Create button
@@ -96,12 +59,11 @@ void Menu::add_button(const char *button_text, Menu *submenu, void (*action)(voi
 			buttons[i]->set_width(button_widths);
 			buttons[i]->set_height(button_heights);
 
-			actions[i] = action;
-			actions_data[i] = data;
-			submenus[i] = submenu;
-			break;
+			return i;
 		}
 	}
+
+	return 255;
 }
 
 void Menu::arrange_buttons() {

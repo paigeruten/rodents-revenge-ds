@@ -8,6 +8,7 @@
 #include "game.h"
 #include "options.h"
 #include "radiomenu.h"
+#include "actionmenu.h"
 
 const ButtonColors BUTTON_COLORS = { RGB(2, 6, 10), RGB(2, 8, 14), RGB(27, 12, 0) };
 const ButtonColors BUTTON_PRESSED_COLORS = { RGB(2, 6, 10), RGB(27, 12, 0), RGB(2, 8, 14) };

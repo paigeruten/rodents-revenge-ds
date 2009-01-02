@@ -1,4 +1,5 @@
 #include <nds.h>
+#include <stdlib.h>
 #include "level.h"
 #include "options.h"
 
@@ -372,6 +373,11 @@ void Level::load() {
 			}
 			break;
 	}
+
+	randomly_disperse_tile(current_level.movable_block_density, TILE_MOVABLE_BLOCK);
+	randomly_disperse_tile(current_level.stationary_block_density, TILE_STATIONARY_BLOCK);
+	randomly_disperse_tile(current_level.trap_density, TILE_MOUSE_TRAP);
+	randomly_disperse_tile(current_level.sinkhole_density, TILE_SINK_HOLE);
 }
 
 bool Level::is_last() {
@@ -407,10 +413,10 @@ void Level::load_levels_from_file(const char *filename) {
 	levels[0].size = LEVEL_MEDIUM;
 	levels[0].mouse = LEVEL_MOUSE_MIDDLE;
 	levels[0].movable_block_density = 0;
-	levels[0].stationary_block_density = 0;
+	levels[0].stationary_block_density = 20;
 	levels[0].yarn_density = 0;
-	levels[0].trap_density = 0;
-	levels[0].sinkhole_density = 0;
+	levels[0].trap_density = 3;
+	levels[0].sinkhole_density = 5;
 }
 
 void Level::load_map(const u8 data[LEVEL_HEIGHT][LEVEL_WIDTH]) {
@@ -430,6 +436,18 @@ void Level::load_map(const u8 data[LEVEL_HEIGHT][LEVEL_WIDTH]) {
 					break;
 			}
 		}
+	}
+}
+
+void Level::randomly_disperse_tile(LevelDensity density, TileNum tile) {
+	for (u16 i = 0; i < density; i++) {
+		u8 random_x;
+		u8 random_y;
+
+		random_x = rand() / (RAND_MAX / (LEVEL_WIDTH - 2)) + 1;
+		random_y = rand() / (RAND_MAX / (LEVEL_HEIGHT - 2)) + 1;
+
+		set_tile(random_x, random_y, tile);
 	}
 }
 

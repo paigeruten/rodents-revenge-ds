@@ -12,7 +12,7 @@ enum GameSpeed {
 };
 
 const LevelId DEFAULT_START_LEVEL = 1;
-const GameSpeed DEFAULT_SPEED = SPEED_FAST;
+const GameSpeed DEFAULT_SPEED = SPEED_SLOW;
 
 const char DATA_DIRECTORY[] = "/data/rodents-revenge/";
 

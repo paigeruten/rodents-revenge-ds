@@ -102,6 +102,7 @@ class Level {
 
 		void load_levels_from_file(const char *filename);
 		void load_map(const u8 data[LEVEL_HEIGHT][LEVEL_WIDTH]);
+		void randomly_disperse_tile(LevelDensity density, TileNum tile);
 };
 
 #endif

@@ -24,6 +24,9 @@ const u8 BUTTON_DEFAULT_PADDING = 6;
 const u16 MAX_BUTTON_TEXT_LENGTH = 256;
 const ButtonColors BUTTON_DEFAULT_COLORS = { RGB(0, 0, 0), RGB(31, 31, 31), RGB(0, 0, 0) };
 
+const ButtonColors BUTTON_COLORS = { RGB(2, 6, 10), RGB(2, 8, 14), RGB(27, 12, 0) };
+const ButtonColors BUTTON_PRESSED_COLORS = { RGB(2, 6, 10), RGB(27, 12, 0), RGB(2, 8, 14) };
+
 class Button {
 	public:
 		// Constructors

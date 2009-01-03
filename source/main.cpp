@@ -7,16 +7,12 @@
 #include "options.h"
 #include "radiomenu.h"
 #include "level.h"
+#include "levelselector.h"
 
-const ButtonColors BUTTON_COLORS = { RGB(2, 6, 10), RGB(2, 8, 14), RGB(27, 12, 0) };
-const ButtonColors BUTTON_PRESSED_COLORS = { RGB(2, 6, 10), RGB(27, 12, 0), RGB(2, 8, 14) };
-
-const Color MENU_BACKGROUND_COLOR = RGB(8, 14, 20);
-const u8 MENU_BUTTON_WIDTHS = SCREEN_WIDTH - 64;
-const u8 MENU_BUTTON_HEIGHTS = 32;
-
-const u8 RADIOMENU_BUTTON_WIDTHS = SCREEN_WIDTH - 64;
-const u8 RADIOMENU_BUTTON_HEIGHTS = 24;
+struct FontSet {
+	Font *large_font;
+	Font *small_font;
+};
 
 void init_screens(void) {
 	// Main screen turn on
@@ -44,13 +40,13 @@ void blah(void *data) {
 	color = (~color) | BIT(15);
 }
 
-void play_game(void *font) {
-	Game game(&screen_top, (Font *)font);
+void play_game(void *fonts) {
+	Game game(&screen_top, ((FontSet *)fonts)->large_font);
 	game.begin();
 }
 
-void change_game_speed(void *font) {
-	RadioMenu speed_menu(&screen_bottom, (Font *)font, MENU_BACKGROUND_COLOR);
+void change_game_speed(void *fonts) {
+	RadioMenu speed_menu(&screen_bottom, ((FontSet *)fonts)->large_font, MENU_BACKGROUND_COLOR);
 
 	speed_menu.set_button_widths(RADIOMENU_BUTTON_WIDTHS);
 	speed_menu.set_button_heights(RADIOMENU_BUTTON_HEIGHTS);
@@ -67,6 +63,13 @@ void change_game_speed(void *font) {
 	speed_menu.set_selected_value(options.get_speed());
 
 	options.set_speed((GameSpeed)speed_menu.select());
+}
+
+void change_starting_level(void *fonts) {
+	LevelSelector level_selector(((FontSet *)fonts)->large_font, ((FontSet *)fonts)->small_font, MENU_BACKGROUND_COLOR);
+
+	level_selector.set_selected_level(options.get_start_level());
+	options.set_start_level(level_selector.select_level());
 }
 
 int main(void) {
@@ -87,11 +90,16 @@ int main(void) {
 		while (1);
 	}
 
-	// Init font
-	Font font(options.full_path("fonts/sans.font"));
+	// Init fonts
+	Font font_sans(options.full_path("fonts/sans.font"));
+	Font font_metroid(options.full_path("fonts/keyboard.font"));
+
+	FontSet fonts;
+	fonts.large_font = &font_sans;
+	fonts.small_font = &font_metroid;
 
 	// Create menus
-	MenuSet menu(&screen_bottom, &font, MENU_BACKGROUND_COLOR);
+	MenuSet menu(&screen_bottom, &font_sans, MENU_BACKGROUND_COLOR);
 	menu.set_button_widths(MENU_BUTTON_WIDTHS);
 	menu.set_button_heights(MENU_BUTTON_HEIGHTS);
 	menu.set_button_colors(BUTTON_COLORS, BUTTON_PRESSED_COLORS);
@@ -101,13 +109,13 @@ int main(void) {
 	MenuId HIGH_SCORES_MENU = menu.add_menu();
 	MenuId RESET_HIGH_SCORES_MENU = menu.add_menu();
 
-	menu.add_button(MAIN_MENU, "Play Game", &play_game, (void *)&font);
+	menu.add_button(MAIN_MENU, "Play Game", &play_game, (void *)&fonts);
 	menu.add_button(MAIN_MENU, "High Scores", HIGH_SCORES_MENU);
 	menu.add_button(MAIN_MENU, "Options", OPTIONS_MENU);
 
 	menu.add_button(OPTIONS_MENU, "Back", MAIN_MENU);
-	menu.add_button(OPTIONS_MENU, "Change Starting Level", &blah, NULL);
-	menu.add_button(OPTIONS_MENU, "Change Game Speed", &change_game_speed, (void *)&font);
+	menu.add_button(OPTIONS_MENU, "Change Starting Level", &change_starting_level, (void *)&fonts);
+	menu.add_button(OPTIONS_MENU, "Change Game Speed", &change_game_speed, (void *)&fonts);
 
 	menu.add_button(HIGH_SCORES_MENU, "Back", MAIN_MENU);
 	menu.add_button(HIGH_SCORES_MENU, "View High Scores", &blah, NULL);

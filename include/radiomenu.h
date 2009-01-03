@@ -7,6 +7,9 @@
 
 const s8 RADIOBUTTON_NONE_SELECTED = -1;
 
+const u8 RADIOMENU_BUTTON_WIDTHS = SCREEN_WIDTH - 64;
+const u8 RADIOMENU_BUTTON_HEIGHTS = 24;
+
 class RadioMenu : public Menu {
 	public:
 		// Constructors

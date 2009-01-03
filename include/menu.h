@@ -7,6 +7,10 @@
 const u8 MAX_BUTTONS = 32;
 const Color MENU_DEFAULT_BACKGROUND_COLOR = RGB(31, 31, 31);
 
+const Color MENU_BACKGROUND_COLOR = RGB(8, 14, 20);
+const u8 MENU_BUTTON_WIDTHS = SCREEN_WIDTH - 64;
+const u8 MENU_BUTTON_HEIGHTS = 32;
+
 class Menu {
 	public:
 		// Constructors

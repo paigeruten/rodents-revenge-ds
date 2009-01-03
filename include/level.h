@@ -15,6 +15,9 @@ const u8 TILE_HEIGHT = 8;
 
 const u8 MAX_LEVELS = 128;
 
+const u8 LEVEL_X = 36;
+const u8 LEVEL_Y = 4;
+
 enum {
 	TILE_EMPTY,
 	TILE_MOVABLE_BLOCK,

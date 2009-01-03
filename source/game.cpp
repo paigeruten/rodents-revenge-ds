@@ -103,7 +103,7 @@ void Game::play_level() {
 				break;
 		}
 
-		level.draw(36, 4);
+		level.draw(LEVEL_X, LEVEL_Y);
 
 		update_score();
 
@@ -197,7 +197,7 @@ void Game::handle_input(u32 input, u32 current_time) {
 
 			case TILE_MOUSE_TRAP:
 				move_mouse(new_mouse_x, new_mouse_y);
-				level.set_tile(new_mouse_x, new_mouse_y, TILE_MOUSE_TRAP);
+				level.set_tile(new_mouse_x, new_mouse_y, TILE_EMPTY);
 				state = STATE_DYING;
 				break;
 
@@ -411,6 +411,7 @@ void Game::move_cat(u8 cat_num) {
 
 			switch (the_tile) {
 				case TILE_MOUSE:
+				case TILE_MOUSE_SINKHOLE:
 					state = STATE_DYING;
 				case TILE_EMPTY:
 					level.set_tile(new_x[min_direction], new_y[min_direction], TILE_CAT);
@@ -458,7 +459,7 @@ void Game::update_score() {
 void Game::update_lives() {
 	screen_bottom.rect(LIVES_X, LIVES_Y, LIVES_X + ((big_mouse_tile.get_width() + LIVES_SPACING) * NUM_LIVES), LIVES_Y + big_mouse_tile.get_height(), BACKGROUND_COLOR, RECT_FILLED);
 
-	for (u8 i = 0; i < lives; i++) {
+	for (u8 i = 0; i < lives - 1; i++) {
 		big_mouse_tile.draw(&screen_bottom, LIVES_X + (i * (big_mouse_tile.get_width() + LIVES_SPACING)), LIVES_Y);
 	}
 }

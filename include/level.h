@@ -85,6 +85,7 @@ class Level {
 		u8 get_num_levels() const { return num_levels; }
 		void set_current_level(LevelId new_current_level) { current_level.id = new_current_level; }
 		LevelId get_current_level() const { return current_level.id; }
+		LevelProperties get_current_level_properties() const { return current_level; }
 		LevelProperties get_level(u8 index) { return levels[index]; }
 		TileNum get_tile(u8 x, u8 y) const { return map.get_tile(x, y); }
 		void set_tile(u8 x, u8 y, TileNum num) { map.set_tile(x, y, num); }

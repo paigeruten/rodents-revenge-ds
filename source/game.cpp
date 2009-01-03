@@ -290,7 +290,9 @@ void Game::move_mouse_random() {
 }
 
 void Game::spawn_cats() {
-	u8 num_cats_to_spawn = rand() / (RAND_MAX / MAX_CATS_TO_SPAWN) + 1;
+	LevelProperties current_level_properties = level.get_current_level_properties();
+
+	u8 num_cats_to_spawn = rand() / (RAND_MAX / current_level_properties.max_cats_spawn) + 1;
 
 	for (u8 i = 0; i < num_cats_to_spawn; i++) {
 		spawn_single_cat();

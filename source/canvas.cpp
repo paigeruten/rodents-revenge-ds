@@ -164,3 +164,17 @@ void Canvas::line(u32 x1, u32 y1, u32 x2, u32 y2, Color color) {
 	}
 }
 
+void Canvas::darken() const {
+	u16 i;
+	Color pixel;
+	
+	for (i = 0; i < width * height; i++) {
+		pixel = data[i];
+
+		data[i] = ((pixel & 0x1F) >> 1) |
+		          ((((pixel >> 5) & 0x1F) >> 1) << 5) |
+		          ((((pixel >> 10) & 0x1F) >> 1) << 10) |
+		          (1 << 15);
+	}
+}
+

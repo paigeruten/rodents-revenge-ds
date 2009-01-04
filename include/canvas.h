@@ -28,6 +28,7 @@ class Canvas {
 		void copy(Canvas *destination);
 		void clear(Color color);
 		void line(u32 x1, u32 y1, u32 x2, u32 y2, Color color);
+		void darken() const;
 
 	private:
 		Color *data;

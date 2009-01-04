@@ -8,9 +8,9 @@ const Color TRANSPARENT = 0;
 
 #define RGB(r, g, b) (RGB15((r), (g), (b)) | BIT(15))
 
-#define RGB_RED(rgb) (((rgb) >> 10) | 0x1F)
+#define RGB_RED(rgb) ((rgb) | 0x1F)
 #define RGB_GREEN(rgb) (((rgb) >> 5) | 0x1F)
-#define RGB_BLUE(rgb) ((rgb) | 0x1F)
+#define RGB_BLUE(rgb) (((rgb) >> 10) | 0x1F)
 
 #endif
 

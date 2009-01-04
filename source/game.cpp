@@ -210,6 +210,21 @@ void Game::handle_input(u32 input, u32 current_time) {
 		}		
 	}
 
+	// Pause
+	if (keysHeld() & KEY_START) {
+		screen_top.darken();
+		screen_top.darken();
+
+		font->print_string_center("-Paused-", 85, &screen_top, RGB(31, 15, 0));
+
+		while (keysHeld() & KEY_START) { scanKeys(); swiWaitForVBlank(); }
+		while (!(keysHeld() & KEY_START)) { scanKeys(); swiWaitForVBlank(); }
+		while (keysHeld() & KEY_START) { scanKeys(); swiWaitForVBlank(); }
+
+		screen_top.clear(BACKGROUND_COLOR);
+		level.draw(LEVEL_X, LEVEL_Y);		
+	}
+
 	// Take screenshot (not for ordinary users)
 	u32 screenshot_key_combo = (KEY_L | KEY_R | KEY_A | KEY_B | KEY_X | KEY_Y | KEY_START | KEY_SELECT);
 	if ((keysHeld() & screenshot_key_combo) == screenshot_key_combo) {

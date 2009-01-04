@@ -6,6 +6,7 @@
 #include "font.h"
 #include "tile.h"
 #include "tilemap.h"
+#include "menu.h"
 #include "level.h"
 #include "options.h"
 #include "clock.h"
@@ -24,7 +25,7 @@ const u8 LIVES_X = 10;
 const u8 LIVES_Y = 15;
 const u8 LIVES_SPACING = 3;
 
-const Color BACKGROUND_COLOR = RGB(23, 23, 23);
+const Color BACKGROUND_COLOR = MENU_BACKGROUND_COLOR;
 
 const u8 SINKHOLE_TIME_LIMIT = 5;
 

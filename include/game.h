@@ -72,6 +72,7 @@ class Game {
 		u8 cats_y[MAX_CATS];
 		u8 num_cats;
 		u8 num_sitting_cats;
+		Button *back_button;
 		bool fast_forwarding;
 		bool done_level;
 

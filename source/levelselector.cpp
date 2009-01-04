@@ -32,7 +32,7 @@ LevelSelector::LevelSelector(Font *the_font, Font *the_small_font, Color backgro
 
 	button_ok.init(&screen_bottom, font, "OK");
 	button_ok.set_colors(BUTTON_COLORS, BUTTON_PRESSED_COLORS);
-	button_ok.set_x(32);//button_ok.center_x();
+	button_ok.set_x(32);
 	button_ok.set_y(BUTTON_OK_Y);
 	button_ok.set_width(MENU_BUTTON_WIDTHS);
 	button_ok.set_height(MENU_BUTTON_HEIGHTS);

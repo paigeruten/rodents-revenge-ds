@@ -18,9 +18,19 @@ Game::Game(Canvas *the_canvas, Font *the_font) {
 
 	// This tile is used to display the number of lives
 	big_mouse_tile.load_from_file(options.full_path("tiles/mouse_big.tile"));
+
+	back_button = new Button;
+	back_button->init(&screen_bottom, font, "Quit");
+	back_button->set_colors(BUTTON_COLORS, BUTTON_PRESSED_COLORS);
+	back_button->set_x(32);
+	back_button->set_y(SCREEN_HEIGHT - 64);
+	back_button->set_width(MENU_BUTTON_WIDTHS);
+	back_button->set_height(MENU_BUTTON_HEIGHTS);
 }
 
 Game::~Game() {
+	delete back_button;
+	back_button = NULL;
 }
 
 u32 Game::begin() {
@@ -50,6 +60,8 @@ void Game::play_level() {
 
 	Clock clock(&screen_bottom, CLOCK_X, CLOCK_Y);
 	clock.draw();
+
+	back_button->draw();
 
 	mouse_x = LEVEL_WIDTH / 2;
 	mouse_y = LEVEL_HEIGHT / 2;
@@ -223,6 +235,11 @@ void Game::handle_input(u32 input, u32 current_time) {
 
 		screen_top.clear(BACKGROUND_COLOR);
 		level.draw(LEVEL_X, LEVEL_Y);		
+	}
+
+	if (back_button->update(touchReadXY()) == BUTTON_CLICKED) {
+		done_level = true;
+		lives = 0;
 	}
 
 	// Take screenshot (not for ordinary users)

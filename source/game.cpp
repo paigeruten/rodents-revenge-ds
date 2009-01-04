@@ -264,7 +264,7 @@ void Game::handle_input(u32 input, u32 current_time) {
 	}
 
 	// Take screenshot (not for ordinary users)
-	u32 screenshot_key_combo = (KEY_L | KEY_R | KEY_A | KEY_B | KEY_X | KEY_Y | KEY_START | KEY_SELECT);
+	u32 screenshot_key_combo = (KEY_L | KEY_R | KEY_A | KEY_B | KEY_X | KEY_Y | KEY_SELECT);
 	if ((keysHeld() & screenshot_key_combo) == screenshot_key_combo) {
 		while (keysHeld()) { scanKeys(); }
 

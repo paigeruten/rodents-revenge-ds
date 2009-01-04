@@ -81,6 +81,12 @@ void Game::play_level() {
 			move_cats();
 		}
 
+		if (clock.get_minute_tick()) {
+			if (!fast_forwarding) {
+				score += level.get_current_level();
+			}
+		}
+
 		if (clock.get_reached_blue_line()) {
 			if (fast_forwarding) {
 				fast_forwarding = false;
@@ -97,6 +103,12 @@ void Game::play_level() {
 		if (clock.get_state() == CLOCK_STOPPED) {
 			if (num_cats == 0) {
 				done_level = true;
+			} else {
+				if (score < 3) {
+					score = 0;
+				} else {
+					score -= 3;
+				}
 			}
 		}
 

@@ -5,8 +5,6 @@
 #include "tile.h"
 #include "tilemap.h"
 
-const u8 NUM_TILES = 13;
-
 const u8 LEVEL_WIDTH = 23;
 const u8 LEVEL_HEIGHT = 23;
 
@@ -31,7 +29,10 @@ enum {
 	TILE_MOUSE_SINKHOLE,
 	TILE_BORDER_OPENING_VERTICAL,
 	TILE_BORDER_OPENING_HORIZONTAL,
-	TILE_CAT_SITTING
+	TILE_CAT_SITTING,
+	TILE_MOUSE_DEAD,
+
+	NUM_TILES
 };
 
 enum LevelType {

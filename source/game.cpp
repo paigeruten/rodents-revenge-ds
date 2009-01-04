@@ -165,7 +165,16 @@ void Game::die() {
 
 	state = STATE_NORMAL;
 
-	// TODO: Play animation of mouse dying here.
+	TileNum old_tile = level.get_tile(mouse_x, mouse_y);
+
+	level.set_tile(mouse_x, mouse_y, TILE_MOUSE_DEAD);
+	level.draw(LEVEL_X, LEVEL_Y);
+
+	for (u8 timer = 0; timer < 60; timer++) {
+		swiWaitForVBlank();
+	}
+
+	level.set_tile(mouse_x, mouse_y, old_tile);
 
 	// Randomly respawn mouse to new location
 	u8 random_x;

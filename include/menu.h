@@ -34,6 +34,7 @@ class Menu {
 		void init(Canvas *the_canvas, Font *the_font, Color background);
 		void draw();
 		u8 add_menu_button(const char *button_text);
+		void arrange_buttons();
 
 	private:
 		Canvas *canvas;
@@ -46,7 +47,6 @@ class Menu {
 
 		Button *buttons[MAX_BUTTONS];
 
-		void arrange_buttons();
 		u8 button_count() const;
 };
 

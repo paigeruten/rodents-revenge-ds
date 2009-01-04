@@ -15,6 +15,8 @@ RadioMenu::~RadioMenu() {
 }
 
 void RadioMenu::set_selected_button(s8 new_selected_button) {
+	arrange_buttons();
+
 	if (selected_button != RADIOBUTTON_NONE_SELECTED) {
 		get_button(selected_button)->set_colors(get_button_colors(), get_button_pressed_colors());
 		get_button(selected_button)->draw();

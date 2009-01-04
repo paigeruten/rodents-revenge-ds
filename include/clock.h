@@ -4,7 +4,10 @@
 #include "canvas.h"
 #include "options.h"
 
-enum ClockState { CLOCK_STARTED, CLOCK_STOPPED };
+enum ClockState {
+	CLOCK_STARTED,
+	CLOCK_STOPPED
+};
 
 const u8 CLOCK_WIDTH = 29;
 const u8 CLOCK_HEIGHT = 32;

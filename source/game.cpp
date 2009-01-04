@@ -43,6 +43,8 @@ void Game::play_level() {
 
 	state = STATE_NORMAL;
 
+	fast_forwarding = false;
+
 	screen_top.clear(BACKGROUND_COLOR);
 	screen_bottom.clear(BACKGROUND_COLOR);
 
@@ -68,8 +70,8 @@ void Game::play_level() {
 		}
 
 		if (clock.get_reached_blue_line()) {
-			if (state == STATE_FAST_FORWARD) {
-				state = STATE_NORMAL;
+			if (fast_forwarding) {
+				fast_forwarding = false;
 				clock.set_speed(options.get_speed());
 			}
 
@@ -86,10 +88,11 @@ void Game::play_level() {
 			}
 		}
 
+		if (fast_forwarding) {
+			clock.set_speed(1);
+		}
+
 		switch (state) {
-			case STATE_FAST_FORWARD:
-				// Intentional fall-through
-				clock.set_speed(1);
 			case STATE_NORMAL:
 				handle_input(keys_down, clock.get_tick());
 				break;
@@ -446,7 +449,7 @@ void Game::destroy_cats() {
 	num_cats = 0;
 	num_sitting_cats = 0;
 
-	state = STATE_FAST_FORWARD;
+	fast_forwarding = true;
 }
 
 void Game::update_score() {

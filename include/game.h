@@ -28,8 +28,6 @@ const Color BACKGROUND_COLOR = RGB(23, 23, 23);
 
 const u8 SINKHOLE_TIME_LIMIT = 5;
 
-const u8 NUM_DIRECTIONS = 8;
-
 enum Direction {
 	DIRECTION_NORTH,
 	DIRECTION_NORTHEAST,
@@ -38,14 +36,15 @@ enum Direction {
 	DIRECTION_SOUTH,
 	DIRECTION_SOUTHWEST,
 	DIRECTION_WEST,
-	DIRECTION_NORTHWEST
+	DIRECTION_NORTHWEST,
+
+	NUM_DIRECTIONS
 };
 
 enum PlayerState {
 	STATE_NORMAL,
 	STATE_SINKHOLE,
-	STATE_DYING,
-	STATE_FAST_FORWARD
+	STATE_DYING
 };
 
 class Game {
@@ -72,6 +71,7 @@ class Game {
 		u8 cats_y[MAX_CATS];
 		u8 num_cats;
 		u8 num_sitting_cats;
+		bool fast_forwarding;
 		bool done_level;
 
 		void load_level();

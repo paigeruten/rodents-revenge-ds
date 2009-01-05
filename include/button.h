@@ -16,6 +16,7 @@ enum ButtonState {
 	BUTTON_NORMAL = 0,
 	BUTTON_PRESSED,
 	BUTTON_CLICKED,
+	BUTTON_DISABLED,
 
 	NUM_BUTTON_STATES
 };
@@ -26,6 +27,7 @@ const ButtonColors BUTTON_DEFAULT_COLORS = { RGB(0, 0, 0), RGB(31, 31, 31), RGB(
 
 const ButtonColors BUTTON_COLORS = { RGB(2, 6, 10), RGB(2, 8, 14), RGB(27, 12, 0) };
 const ButtonColors BUTTON_PRESSED_COLORS = { RGB(2, 6, 10), RGB(27, 12, 0), RGB(2, 8, 14) };
+const ButtonColors BUTTON_DISABLED_COLORS = { RGB(6, 6, 6), RGB(14, 14, 14), RGB(24, 24, 24) };
 
 class Button {
 	public:
@@ -54,6 +56,8 @@ class Button {
 		void init(Canvas *the_canvas, Font *the_font, const char *the_text);
 		void draw() const;
 		ButtonState update(touchPosition stylus);
+		void enable();
+		void disable();
 		void center_x();
 		void center_y();
 

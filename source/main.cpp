@@ -8,11 +8,7 @@
 #include "radiomenu.h"
 #include "level.h"
 #include "levelselector.h"
-
-struct FontSet {
-	Font *large_font;
-	Font *small_font;
-};
+#include "help.h"
 
 void init_screens(void) {
 	// Main screen turn on
@@ -112,6 +108,7 @@ int main(void) {
 	menu.add_button(MAIN_MENU, "Play Game", &play_game, (void *)&fonts);
 	menu.add_button(MAIN_MENU, "High Scores", HIGH_SCORES_MENU);
 	menu.add_button(MAIN_MENU, "Options", OPTIONS_MENU);
+	menu.add_button(MAIN_MENU, "Help", &help, (void *)&fonts);
 
 	menu.add_button(OPTIONS_MENU, "Back", MAIN_MENU);
 	menu.add_button(OPTIONS_MENU, "Change Starting Level", &change_starting_level, (void *)&fonts);

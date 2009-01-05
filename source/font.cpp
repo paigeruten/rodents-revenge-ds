@@ -61,6 +61,12 @@ void Font::print_string_center(const char *string, u16 y, Canvas *canvas, Color 
 	print_string(string, put_x, y, canvas, color, bgcolor);
 }
 
+void Font::print_string_right(const char *string, u16 margin, u16 y, Canvas *canvas, Color color, Color bgcolor) const {
+	u16 put_x = canvas->get_width() - string_width(string) - margin;
+
+	print_string(string, put_x, y, canvas, color, bgcolor);
+}
+
 void Font::print_number(s32 num, u16 x, u16 y, Canvas *canvas, Color color, Color bgcolor) const {
 	print_string(strval(num), x, y, canvas, color, bgcolor);
 }

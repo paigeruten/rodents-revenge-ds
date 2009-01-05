@@ -27,6 +27,7 @@ class Font {
 		void print_char(char character, u16 x, u16 y, Canvas *canvas, Color color = RGB(0, 0, 0), Color bgcolor = TRANSPARENT) const;
 		void print_string(const char *string, u16 x, u16 y, Canvas *canvas, Color color = RGB(0, 0, 0), Color bgcolor = TRANSPARENT) const;
 		void print_string_center(const char *string, u16 y, Canvas *canvas, Color color = RGB(0, 0, 0), Color bgcolor = TRANSPARENT) const;
+		void print_string_right(const char *string, u16 margin, u16 y, Canvas *canvas, Color color = RGB(0, 0, 0), Color bgcolor = TRANSPARENT) const;
 		void print_number(s32 num, u16 x, u16 y, Canvas *canvas, Color color = RGB(0, 0, 0), Color bgcolor = TRANSPARENT) const;
 
 		// Returns width of string/single char in pixels
@@ -46,4 +47,10 @@ class Font {
 		FontStatus load_font(const char *filename);
 };
 
+struct FontSet {
+	Font *large_font;
+	Font *small_font;
+};
+
 #endif
+

@@ -6,6 +6,7 @@ Button::Button() {
 	init(NULL, NULL, "");
 
 	set_colors(BUTTON_DEFAULT_COLORS, BUTTON_DEFAULT_COLORS);
+	colors[BUTTON_DISABLED] = BUTTON_DISABLED_COLORS;
 
 	x = 0;
 	y = 0;
@@ -17,6 +18,7 @@ Button::Button(Canvas *the_canvas, Font *the_font, const char *the_text) {
 	init(the_canvas, the_font, the_text);
 
 	set_colors(BUTTON_DEFAULT_COLORS, BUTTON_DEFAULT_COLORS);
+	colors[BUTTON_DISABLED] = BUTTON_DISABLED_COLORS;
 
 	x = 0;
 	y = 0;
@@ -87,15 +89,25 @@ void Button::draw() const {
 }
 
 ButtonState Button::update(touchPosition stylus) {
-	ButtonState old_state = state;
+	if (state != BUTTON_DISABLED) {
+		ButtonState old_state = state;
 
-	update_state(stylus);
+		update_state(stylus);
 
-	if (state != old_state) {
-		draw();
+		if (state != old_state) {
+			draw();
+		}
 	}
 
 	return state;
+}
+
+void Button::enable() {
+	state = BUTTON_NORMAL;
+}
+
+void Button::disable() {
+	state = BUTTON_DISABLED;
 }
 
 void Button::center_x() {

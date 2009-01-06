@@ -79,6 +79,10 @@ void help(void *fonts) {
 
 		swiWaitForVBlank();
 	}
+
+	// Load title screen
+	Image image_title(&screen_top, options.full_path("images/title.img"));
+	image_title.draw(0, 0);
 }
 
 void print_help_page(FontSet *fonts, u8 page) {

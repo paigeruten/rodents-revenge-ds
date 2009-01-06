@@ -9,6 +9,7 @@
 #include "level.h"
 #include "levelselector.h"
 #include "help.h"
+#include "image.h"
 
 void init_screens(void) {
 	// Main screen turn on
@@ -31,14 +32,15 @@ void init_screens(void) {
 }
 
 void blah(void *data) {
-	static Color color = RGB(0, 0, 0);
-	screen_top.clear(color);
-	color = (~color) | BIT(15);
 }
 
 void play_game(void *fonts) {
 	Game game(&screen_top, ((FontSet *)fonts)->large_font);
 	game.begin();
+
+	// Load title screen
+	Image image_title(&screen_top, options.full_path("images/title.img"));
+	image_title.draw(0, 0);
 }
 
 void change_game_speed(void *fonts) {
@@ -66,6 +68,10 @@ void change_starting_level(void *fonts) {
 
 	level_selector.set_selected_level(options.get_start_level());
 	options.set_start_level(level_selector.select_level());
+
+	// Load title screen
+	Image image_title(&screen_top, options.full_path("images/title.img"));
+	image_title.draw(0, 0);
 }
 
 int main(void) {
@@ -120,6 +126,10 @@ int main(void) {
 
 	menu.add_button(RESET_HIGH_SCORES_MENU, "Back", HIGH_SCORES_MENU);
 	menu.add_button(RESET_HIGH_SCORES_MENU, "Confirm Reset", &blah, NULL);
+
+	// Load title screen
+	Image image_title(&screen_top, options.full_path("images/title.img"));
+	image_title.draw(0, 0);
 
 	menu.begin(MAIN_MENU);
 

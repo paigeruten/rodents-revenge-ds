@@ -7,6 +7,7 @@
 #include "menu.h"
 #include "tile.h"
 #include "options.h"
+#include "clock.h"
 
 const u8 NUM_PAGES = 5;
 

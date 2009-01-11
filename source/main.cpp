@@ -10,6 +10,7 @@
 #include "levelselector.h"
 #include "help.h"
 #include "image.h"
+#include "hiscores.h"
 
 void init_screens(void) {
 	// Main screen turn on
@@ -36,7 +37,9 @@ void blah(void *data) {
 
 void play_game(void *fonts) {
 	Game game(&screen_top, ((FontSet *)fonts)->large_font);
-	game.begin();
+	u32 score = game.begin();
+
+	add_high_score(score, ((FontSet *)fonts)->large_font, ((FontSet *)fonts)->small_font);
 
 	// Load title screen
 	Image image_title(&screen_top, options.full_path("images/title.img"));
@@ -68,6 +71,43 @@ void change_starting_level(void *fonts) {
 
 	level_selector.set_selected_level(options.get_start_level());
 	options.set_start_level(level_selector.select_level());
+
+	// Load title screen
+	Image image_title(&screen_top, options.full_path("images/title.img"));
+	image_title.draw(0, 0);
+}
+
+void view_high_scores(void *fonts) {
+	screen_top.clear(MENU_BACKGROUND_COLOR);
+	screen_bottom.clear(MENU_BACKGROUND_COLOR);
+
+	display_high_scores(((FontSet *)fonts)->large_font);
+
+	((FontSet *)fonts)->large_font->print_string("Press A to continue.", 10, 170, &screen_bottom, RGB(0, 0, 0));
+
+	do {
+		scanKeys();
+		swiWaitForVBlank();
+	} while (!(keysUp() & KEY_A));
+
+	// Load title screen
+	Image image_title(&screen_top, options.full_path("images/title.img"));
+	image_title.draw(0, 0);
+}
+
+void reset_high_scores(void *fonts) {
+	screen_top.clear(MENU_BACKGROUND_COLOR);
+	screen_bottom.clear(MENU_BACKGROUND_COLOR);
+
+	((FontSet *)fonts)->large_font->print_string("High scores reset!", 10, 10, &screen_top, RGB(0, 0, 0));
+	((FontSet *)fonts)->large_font->print_string("Press A to continue.", 10, 40, &screen_top, RGB(0, 0, 0));
+
+	reset_high_scores();
+
+	do {
+		scanKeys();
+		swiWaitForVBlank();
+	} while (!(keysUp() & KEY_A));
 
 	// Load title screen
 	Image image_title(&screen_top, options.full_path("images/title.img"));
@@ -121,11 +161,11 @@ int main(void) {
 	menu.add_button(OPTIONS_MENU, "Change Game Speed", &change_game_speed, (void *)&fonts);
 
 	menu.add_button(HIGH_SCORES_MENU, "Back", MAIN_MENU);
-	menu.add_button(HIGH_SCORES_MENU, "View High Scores", &blah, NULL);
+	menu.add_button(HIGH_SCORES_MENU, "View High Scores", &view_high_scores, (void *)&fonts);
 	menu.add_button(HIGH_SCORES_MENU, "Reset High Scores", RESET_HIGH_SCORES_MENU);
 
 	menu.add_button(RESET_HIGH_SCORES_MENU, "Back", HIGH_SCORES_MENU);
-	menu.add_button(RESET_HIGH_SCORES_MENU, "Confirm Reset", &blah, NULL);
+	menu.add_button(RESET_HIGH_SCORES_MENU, "Confirm Reset", &reset_high_scores, (void *)&fonts);
 
 	// Load title screen
 	Image image_title(&screen_top, options.full_path("images/title.img"));

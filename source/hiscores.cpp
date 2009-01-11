@@ -105,18 +105,17 @@ bool add_high_score(u32 score, Font *font, Font *keyboard_font) {
 void display_high_scores(Font *font) {
 	load_high_scores();
 
-	screen_top.clear(MENU_BACKGROUND_COLOR);
-
-	font->print_string_center("High Scores", 10, &screen_top, RGB(0, 0, 0));
-
 	char str[256];
 	for (u8 i = 0; i < MAX_HIGH_SCORES; i++) {
 		Canvas *which_screen;
+		u8 y_offset;
 
 		if (i < 5) {
 			which_screen = &screen_top;
+			y_offset = 75;
 		} else {
 			which_screen = &screen_bottom;
+			y_offset = 30;
 		}
 
 		strcpy(str, strval(i + 1));
@@ -126,10 +125,10 @@ void display_high_scores(Font *font) {
 			strcat(str, high_scores[i].name);
 		}
 
-		font->print_string(str, 10, 50 + (i % 5) * 20, which_screen, RGB(31, 15, 0));
+		font->print_string(str, 25, y_offset + (i % 5) * 20, which_screen, RGB(31, 15, 0));
 
 		if (i < num_high_scores) {
-			font->print_number(high_scores[i].score, 200, 50 + (i % 5) * 20, which_screen, RGB(31, 15, 0));
+			font->print_number(high_scores[i].score, 200, y_offset + (i % 5) * 20, which_screen, RGB(31, 15, 0));
 		}
 	}
 }
@@ -152,20 +151,20 @@ void load_high_scores() {
 		// Get name
 		fgets(line, 256, hiscores_file);
 		chop(line);
+		if (line[0] == '\0') break;
 		strcpy(high_scores[num_high_scores].name, line);
 
 		// Get score
 		fgets(line, 256, hiscores_file);
 		chop(line);
+		if (line[0] == '\0') break;
 
 		s32 the_score;
 		intval(line, &the_score);
 		
 		high_scores[num_high_scores].score = the_score;
 
-		if (!feof(hiscores_file)) {
-			num_high_scores++;
-		}
+		num_high_scores++;
 	}
 
 	fclose(hiscores_file);

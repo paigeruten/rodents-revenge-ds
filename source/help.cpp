@@ -92,6 +92,9 @@ void print_help_page(FontSet *fonts, u8 page) {
 	screen_top.clear(MENU_BACKGROUND_COLOR);
 	screen_bottom.clear(MENU_BACKGROUND_COLOR);
 
+	screen_top.rect(0, 0, SCREEN_WIDTH - 1, 23, RGB(13, 19, 25), RECT_FILLED);
+	screen_top.rect(0, 24, SCREEN_WIDTH - 1, 24, RGB(0, 0, 0), RECT_FILLED);
+
 	char page_num[16] = "Page ";
 
 	strcat(page_num, strval(page + 1));

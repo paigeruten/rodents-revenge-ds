@@ -78,17 +78,34 @@ void change_starting_level(void *fonts) {
 }
 
 void view_high_scores(void *fonts) {
-	screen_top.clear(MENU_BACKGROUND_COLOR);
-	screen_bottom.clear(MENU_BACKGROUND_COLOR);
+	Image image_high_scores_top(&screen_top, options.full_path("images/high_scores_top.img"));
+	Image image_high_scores_bottom(&screen_bottom, options.full_path("images/high_scores_bottom.img"));
+
+	image_high_scores_top.draw(0, 0);
+	image_high_scores_bottom.draw(0, 0);
 
 	display_high_scores(((FontSet *)fonts)->large_font);
 
-	((FontSet *)fonts)->large_font->print_string("Press A to continue.", 10, 170, &screen_bottom, RGB(0, 0, 0));
+	Button button_back(&screen_bottom, ((FontSet *)fonts)->large_font, "Back");
+	button_back.set_colors(BUTTON_COLORS, BUTTON_PRESSED_COLORS);
+	button_back.set_width(SCREEN_WIDTH - 64);
+	button_back.set_height(32);
+	button_back.center_x();
+	button_back.set_y(150);
 
-	do {
+	button_back.draw();
+
+	touchPosition stylus;
+	while (1) {
 		scanKeys();
+		stylus = touchReadXY();
+
+		if (button_back.update(stylus) == BUTTON_CLICKED) {
+			break;
+		}
+
 		swiWaitForVBlank();
-	} while (!(keysUp() & KEY_A));
+	}
 
 	// Load title screen
 	Image image_title(&screen_top, options.full_path("images/title.img"));
@@ -96,22 +113,35 @@ void view_high_scores(void *fonts) {
 }
 
 void reset_high_scores(void *fonts) {
-	screen_top.clear(MENU_BACKGROUND_COLOR);
 	screen_bottom.clear(MENU_BACKGROUND_COLOR);
 
-	((FontSet *)fonts)->large_font->print_string("High scores reset!", 10, 10, &screen_top, RGB(0, 0, 0));
-	((FontSet *)fonts)->large_font->print_string("Press A to continue.", 10, 40, &screen_top, RGB(0, 0, 0));
+	screen_bottom.rect(16, 42, 250, 158, RGB(0, 0, 0), RECT_OUTLINE);
+	screen_bottom.rect(17, 43, 249, 157, RGB(0, 22, 31), RECT_FILLED);
+
+	((FontSet *)fonts)->large_font->print_string_center("High scores reset!", 58, &screen_bottom, RGB(0, 0, 0));
+
+	Button button_back(&screen_bottom, ((FontSet *)fonts)->large_font, "OK");
+	button_back.set_colors(BUTTON_COLORS, BUTTON_PRESSED_COLORS);
+	button_back.set_width(SCREEN_WIDTH - 64);
+	button_back.set_height(32);
+	button_back.center_x();
+	button_back.set_y(110);
+
+	button_back.draw();
 
 	reset_high_scores();
 
-	do {
+	touchPosition stylus;
+	while (1) {
 		scanKeys();
-		swiWaitForVBlank();
-	} while (!(keysUp() & KEY_A));
+		stylus = touchReadXY();
 
-	// Load title screen
-	Image image_title(&screen_top, options.full_path("images/title.img"));
-	image_title.draw(0, 0);
+		if (button_back.update(stylus) == BUTTON_CLICKED) {
+			break;
+		}
+
+		swiWaitForVBlank();
+	}
 }
 
 int main(void) {

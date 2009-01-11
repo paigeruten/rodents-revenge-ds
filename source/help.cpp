@@ -74,7 +74,7 @@ void help(void *fonts) {
 		}
 
 		if (button_back.update(stylus) == BUTTON_CLICKED) {
-			return;
+			break;
 		}
 
 		swiWaitForVBlank();

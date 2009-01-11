@@ -6,7 +6,34 @@ ifeq ($(strip $(DEVKITARM)),)
 $(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>devkitARM")
 endif
 
-include $(DEVKITARM)/ds_rules
+include $(DEVKITARM)/base_rules
+
+LIBNDS	:=	$(DEVKITPRO)/libnds
+
+#-------------------------------------------------------------------------------
+%.ds.gba: %.nds
+	@dsbuild $<
+	@echo built ... $(notdir $@)
+
+#-------------------------------------------------------------------------------
+%.nds: %.arm9
+	@ndstool -c $@ -9 $< -b $(CURDIR)/../icon.bmp "Rodent's Revenge DS;Version 1.00;By Jeremy Ruten"
+	@echo built ... $(notdir $@)
+
+#-------------------------------------------------------------------------------
+%.arm9: %.elf
+	@$(OBJCOPY) -O binary $< $@
+	@echo built ... $(notdir $@)
+ 
+#-------------------------------------------------------------------------------
+%.arm7: %.elf
+	@$(OBJCOPY) -O binary $< $@
+	@echo built ... $(notdir $@)
+
+#-------------------------------------------------------------------------------
+%.elf:
+	@echo linking $(notdir $@)
+	@$(LD)  $(LDFLAGS) $(OFILES) $(LIBPATHS) $(LIBS) -o $@
 
 #---------------------------------------------------------------------------------
 # TARGET is the name of the output

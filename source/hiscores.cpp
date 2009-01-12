@@ -145,17 +145,18 @@ void load_high_scores() {
 	}
 
 	char line[256];
+	char *not_empty;
 	while (!feof(hiscores_file)) {
 		// Get name
-		fgets(line, 256, hiscores_file);
+		not_empty = fgets(line, 256, hiscores_file);
 		chop(line);
-		if (line[0] == '\0') break;
+		if (line[0] == '\0' || !not_empty) break;
 		strcpy(high_scores[num_high_scores].name, line);
 
 		// Get score
-		fgets(line, 256, hiscores_file);
+		not_empty = fgets(line, 256, hiscores_file);
 		chop(line);
-		if (line[0] == '\0') break;
+		if (line[0] == '\0' || !not_empty) break;
 
 		s32 the_score;
 		intval(line, &the_score);

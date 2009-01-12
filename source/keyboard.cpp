@@ -16,12 +16,12 @@ Keyboard::Keyboard(const char *filename, Canvas *the_canvas, Font *the_font, u8 
 	keyboard_y = canvas->get_height() - calculate_keyboard_height() - 15;
 
 	// Default colors
-	colors.line = RGB(15, 15, 15);
-	colors.key_background = RGB(31, 31, 31);
-	colors.text = RGB(0, 0, 0);
-	colors.background = RGB(31, 31, 31);
-	colors.highlight_key_background = RGB(31, 15, 0);
-	colors.highlight_text = RGB(0, 0, 0);
+	colors.line = RGB(2, 6, 10);
+	colors.key_background = RGB(2, 8, 14);
+	colors.text = RGB(27, 12, 0);
+	colors.background = MENU_BACKGROUND_COLOR;
+	colors.highlight_key_background = RGB(27, 12, 0);
+	colors.highlight_text = RGB(2, 8, 14);
 }
 
 Keyboard::~Keyboard() {

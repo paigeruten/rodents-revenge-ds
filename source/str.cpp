@@ -73,6 +73,8 @@ char *strval(s32 num) {
 }
 
 void chop(char *string) {
-	string[strlen(string) - 1] = '\0';
+	if (string[0]) {
+		string[strlen(string) - 1] = '\0';
+	}
 }
 

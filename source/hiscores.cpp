@@ -28,22 +28,19 @@ bool add_high_score(u32 score, Font *font, Font *keyboard_font) {
 	}
 
 	Keyboard keyboard(options.full_path("keyboards/default.kb"), &screen_bottom, keyboard_font, 17, 100);
-	Textbox textbox(&screen_top, font);
+	Textbox textbox(&screen_bottom, font);
 
 	textbox.set_x(5);
 	textbox.set_y(60);
 	textbox.set_dimensions(240, 22);
 	textbox.set_value("");
 
-	screen_top.clear(MENU_BACKGROUND_COLOR);
-	screen_bottom.clear(MENU_BACKGROUND_COLOR);
-
 	keyboard.draw();
 	textbox.draw(true);
 
-	font->print_string("You've got a top-10 high", 10, 10, &screen_top, RGB(0, 0, 0));
-	font->print_string("score! Please enter your", 10, 25, &screen_top, RGB(0, 0, 0));
-	font->print_string("name.", 10, 40, &screen_top, RGB(0, 0, 0));
+	font->print_string("You've got a top-10 high", 10, 10, &screen_bottom, RGB(31, 15, 0));
+	font->print_string("score! Please enter your", 10, 25, &screen_bottom, RGB(31, 15, 0));
+	font->print_string("name.", 10, 40, &screen_bottom, RGB(31, 15, 0));
 
 	char name[256] = "";
 	touchPosition stylus;
@@ -141,11 +138,12 @@ void reset_high_scores() {
 void load_high_scores() {
 	FILE *hiscores_file = fopen(options.full_path("hiscores"), "r");
 
+	num_high_scores = 0;
+
 	if (!hiscores_file) {
 		return;
 	}
 
-	num_high_scores = 0;
 	char line[256];
 	while (!feof(hiscores_file)) {
 		// Get name

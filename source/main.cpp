@@ -39,11 +39,11 @@ void play_game(void *fonts) {
 	Game game(&screen_top, ((FontSet *)fonts)->large_font);
 	u32 score = game.begin();
 
-	add_high_score(score, ((FontSet *)fonts)->large_font, ((FontSet *)fonts)->small_font);
-
 	// Load title screen
 	Image image_title(&screen_top, options.full_path("images/title.img"));
 	image_title.draw(0, 0);
+
+	add_high_score(score, ((FontSet *)fonts)->large_font, ((FontSet *)fonts)->small_font);
 }
 
 void change_game_speed(void *fonts) {

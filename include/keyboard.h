@@ -4,6 +4,7 @@
 #include "color.h"
 #include "canvas.h"
 #include "font.h"
+#include "menu.h"
 
 enum KeyboardStatus {
 	KEYBOARD_OK,

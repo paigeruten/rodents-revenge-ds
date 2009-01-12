@@ -12,9 +12,9 @@ struct TextboxColors {
 };
 
 const TextboxColors TEXTBOX_DEFAULT_COLORS = {
-	RGB(0, 0, 0),
-	RGB(31, 31, 31),
-	RGB(5, 5, 5)
+	RGB(2, 6, 10),
+	RGB(2, 8, 14),
+	RGB(27, 12, 0)
 };
 
 const u16 TEXTBOX_MAX_LENGTH = 256;

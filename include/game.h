@@ -17,6 +17,8 @@ const u8 NUM_LIVES = 3;
 const u8 MAX_CATS = 32;
 const u8 MAX_CATS_TO_SPAWN = 3;
 
+const u8 MAX_YARNS = 32;
+
 const u8 SCORE_X = SCREEN_WIDTH - 55;
 const u8 SCORE_Y = 15;
 const Color SCORE_COLOR = RGB(0, 0, 0);
@@ -48,6 +50,12 @@ enum PlayerState {
 	STATE_DYING
 };
 
+enum YarnState {
+	YARN_SITTING,
+	YARN_SPAWNING,
+	YARN_MOVING
+};
+
 class Game {
 	public:
 		// Constructors
@@ -72,6 +80,10 @@ class Game {
 		u8 cats_y[MAX_CATS];
 		u8 num_cats;
 		u8 num_sitting_cats;
+		u8 yarns_x[MAX_YARNS];
+		u8 yarns_y[MAX_YARNS];
+		YarnState yarns_state[MAX_YARNS];
+		u8 num_yarns;
 		Button *back_button;
 		bool fast_forwarding;
 		bool done_level;
@@ -86,9 +98,12 @@ class Game {
 		void move_mouse_random();
 		void spawn_cats();
 		void spawn_single_cat();
+		void spawn_yarn();
 		void random_empty_tile(u8 *x, u8 *y);
 		void move_cats();
 		void move_cat(u8 cat_num);
+		void move_yarns();
+		void move_yarn(u8 yarn_num);
 		void destroy_cats();
 		void update_score();
 		void update_lives();

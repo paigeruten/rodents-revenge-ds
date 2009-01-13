@@ -79,6 +79,11 @@ void Game::play_level() {
 
 		if (clock.get_second_tick()) {
 			move_cats();
+			move_yarns();
+
+			if (rand() / (RAND_MAX / 2)) {
+				spawn_yarn();
+			}
 		}
 
 		if (clock.get_minute_tick()) {
@@ -375,6 +380,10 @@ void Game::spawn_single_cat() {
 	num_cats++;
 }
 
+void Game::spawn_yarn() {
+
+}
+
 void Game::random_empty_tile(u8 *x, u8 *y) {
 	// Find all possible empty tiles
 	u8 empty_tiles_x[LEVEL_WIDTH * LEVEL_HEIGHT];
@@ -488,6 +497,14 @@ void Game::move_cat(u8 cat_num) {
 			}
 		}
 	}
+}
+
+void Game::move_yarns() {
+
+}
+
+void Game::move_yarn(u8 yarn_num) {
+
 }
 
 void Game::destroy_cats() {

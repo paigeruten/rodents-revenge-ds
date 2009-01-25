@@ -72,6 +72,12 @@ void Game::play_level() {
 	update_lives();
 	update_score();
 
+	for (u8 i = 0; i < MAX_YARNS; i++) {
+		yarns[i].state = YARN_DEAD;
+	}
+
+	draw_clock = false;
+
 	done_level = false;
 	while (!done_level) {
 		scanKeys();
@@ -79,10 +85,11 @@ void Game::play_level() {
 
 		if (clock.get_second_tick()) {
 			move_cats();
-			move_yarns();
 
-			if (rand() / (RAND_MAX / 2)) {
-				spawn_yarn();
+			if (level.get_current_level_properties().yarn) {
+				if (rand() / (RAND_MAX / YARN_SPAWN_FREQUENCY) == 0) {
+					spawn_yarn();
+				}
 			}
 		}
 
@@ -135,11 +142,20 @@ void Game::play_level() {
 				break;
 		}
 
+		if (clock.get_tick() % YARN_SPEED == 0) {
+			move_yarns();
+		}
+
 		level.draw(LEVEL_X, LEVEL_Y);
 
 		update_score();
 
 		clock.update();
+
+		if (draw_clock) {
+			clock.draw();
+			draw_clock = false;
+		}
 
 		swiWaitForVBlank();
 	}
@@ -251,16 +267,24 @@ void Game::handle_input(u32 input, u32 current_time) {
 	// Pause
 	if (keysHeld() & KEY_START) {
 		screen_top.darken();
+		screen_bottom.darken();
 		screen_top.darken();
+		screen_bottom.darken();
 
 		font->print_string_center("-Paused-", 85, &screen_top, RGB(31, 15, 0));
+		font->print_string_center("-Paused-", 85, &screen_bottom, RGB(31, 15, 0));
 
 		while (keysHeld() & KEY_START) { scanKeys(); swiWaitForVBlank(); }
 		while (!(keysHeld() & KEY_START)) { scanKeys(); swiWaitForVBlank(); }
 		while (keysHeld() & KEY_START) { scanKeys(); swiWaitForVBlank(); }
 
 		screen_top.clear(BACKGROUND_COLOR);
-		level.draw(LEVEL_X, LEVEL_Y);		
+		screen_bottom.clear(BACKGROUND_COLOR);
+
+		back_button->draw();
+		update_lives();
+
+		draw_clock = true;
 	}
 
 	if (back_button->update(touchReadXY()) == BUTTON_CLICKED) {
@@ -381,7 +405,59 @@ void Game::spawn_single_cat() {
 }
 
 void Game::spawn_yarn() {
+	u8 yarn_x;
+	u8 yarn_y;
 
+	random_border_tile(&yarn_x, &yarn_y);
+
+	if (yarn_x == 0 || yarn_x == LEVEL_WIDTH - 1) {
+		level.set_tile(yarn_x, yarn_y, TILE_BORDER_OPENING_VERTICAL);
+	} else {
+		level.set_tile(yarn_x, yarn_y, TILE_BORDER_OPENING_HORIZONTAL);
+	}
+
+	for (u8 i = 0; i < MAX_YARNS; i++) {
+		if (yarns[i].state == YARN_DEAD) {
+			yarns[i].x = yarn_x;
+			yarns[i].y = yarn_y;
+			yarns[i].state = YARN_SPAWNING;
+			yarns[i].lifespan = 0;
+
+			break;
+		}
+	}
+}
+
+void Game::random_border_tile(u8 *x, u8 *y) {
+	// Find all possible empty tiles
+	u8 border_tiles_x[LEVEL_WIDTH * 2 + LEVEL_HEIGHT * 2];
+	u8 border_tiles_y[LEVEL_WIDTH * 2 + LEVEL_HEIGHT * 2];
+	u8 num_border_tiles = 0;
+
+	for (u8 tile_x = 0; tile_x < LEVEL_WIDTH; tile_x++) {
+		for (u8 tile_y = 0; tile_y < LEVEL_HEIGHT; tile_y += LEVEL_HEIGHT - 1) {
+			if (level.get_tile(tile_x, tile_y) == TILE_STATIONARY_BLOCK) {
+				border_tiles_x[num_border_tiles] = tile_x;
+				border_tiles_y[num_border_tiles] = tile_y;
+				num_border_tiles++;
+			}
+		}
+	}
+
+	for (u8 tile_y = 0; tile_y < LEVEL_HEIGHT; tile_y++) {
+		for (u8 tile_x = 0; tile_x < LEVEL_HEIGHT; tile_x += LEVEL_WIDTH - 1) {
+			if (level.get_tile(tile_x, tile_y) == TILE_STATIONARY_BLOCK) {
+				border_tiles_x[num_border_tiles] = tile_x;
+				border_tiles_y[num_border_tiles] = tile_y;
+				num_border_tiles++;
+			}
+		}
+	}
+
+	u16 random_tile = rand() / (RAND_MAX / num_border_tiles);
+
+	*x = border_tiles_x[random_tile];
+	*y = border_tiles_y[random_tile];
 }
 
 void Game::random_empty_tile(u8 *x, u8 *y) {
@@ -500,11 +576,59 @@ void Game::move_cat(u8 cat_num) {
 }
 
 void Game::move_yarns() {
-
+	for (u8 i = 0; i < MAX_YARNS; i++) {
+		if (yarns[i].state != YARN_DEAD) {
+			move_yarn(i);
+		}
+	}
 }
 
 void Game::move_yarn(u8 yarn_num) {
+	if (yarns[yarn_num].state == YARN_SITTING) {
+		if (rand() / (RAND_MAX / YARN_SPAWN_FREQUENCY) == 0) {
+			yarns[yarn_num].state = YARN_MOVING;
+			yarns[yarn_num].direction = (Direction)(rand() / (RAND_MAX / NUM_DIRECTIONS));
+		}
+	} else if (yarns[yarn_num].state == YARN_SPAWNING) {
+		if (yarns[yarn_num].lifespan > YARN_SPAWN_TIME) {
+			yarns[yarn_num].state = YARN_SITTING;
+			level.set_tile(yarns[yarn_num].x, yarns[yarn_num].y, TILE_YARN);
+		}
+	} else if (yarns[yarn_num].state == YARN_MOVING) {
+		s32 new_x = move_x(yarns[yarn_num].x, yarns[yarn_num].direction);
+		s32 new_y = move_y(yarns[yarn_num].y, yarns[yarn_num].direction);
 
+		TileNum tile = level.get_tile(new_x, new_y);
+
+		bool off_map = (new_x < 0 || new_y < 0 || new_x >= LEVEL_WIDTH || new_y >= LEVEL_HEIGHT);
+		bool blocking_tile = (tile != TILE_EMPTY && tile != TILE_CAT && tile != TILE_MOUSE && tile != TILE_MOUSE_SINKHOLE);
+
+		if (off_map || blocking_tile) {
+			if (yarns[yarn_num].lifespan > YARN_MAX_LIFESPAN) {
+				yarns[yarn_num].state = YARN_DEAD;
+				level.set_tile(yarns[yarn_num].x, yarns[yarn_num].y, TILE_EMPTY);
+			} else {
+				yarns[yarn_num].state = YARN_SITTING;
+			}
+		} else {
+			if (yarns[yarn_num].x == 0 || yarns[yarn_num].y == 0 || yarns[yarn_num].x == LEVEL_WIDTH - 1 || yarns[yarn_num].y == LEVEL_HEIGHT - 1) {
+				level.set_tile(yarns[yarn_num].x, yarns[yarn_num].y, TILE_STATIONARY_BLOCK);
+			} else {
+				level.set_tile(yarns[yarn_num].x, yarns[yarn_num].y, TILE_EMPTY);
+			}
+
+			if (tile == TILE_MOUSE || tile == TILE_MOUSE_SINKHOLE) {
+				state = STATE_DYING;
+			}
+
+			level.set_tile(new_x, new_y, TILE_YARN);
+
+			yarns[yarn_num].x = new_x;
+			yarns[yarn_num].y = new_y;
+		}
+	}
+
+	yarns[yarn_num].lifespan++;
 }
 
 void Game::destroy_cats() {
@@ -535,5 +659,51 @@ void Game::update_lives() {
 	for (u8 i = 0; i < lives - 1; i++) {
 		big_mouse_tile.draw(&screen_bottom, LIVES_X + (i * (big_mouse_tile.get_width() + LIVES_SPACING)), LIVES_Y);
 	}
+}
+
+s32 move_x(s32 current_x, Direction direction) {
+	s32 new_x = current_x;
+
+	switch (direction) {
+		case DIRECTION_WEST:
+		case DIRECTION_NORTHWEST:
+		case DIRECTION_SOUTHWEST:
+			new_x--;
+			break;
+
+		case DIRECTION_EAST:
+		case DIRECTION_NORTHEAST:
+		case DIRECTION_SOUTHEAST:
+			new_x++;
+			break;
+
+		default:
+			;
+	}
+
+	return new_x;
+}
+
+s32 move_y(s32 current_y, Direction direction) {
+	s32 new_y = current_y;
+
+	switch (direction) {
+		case DIRECTION_NORTH:
+		case DIRECTION_NORTHEAST:
+		case DIRECTION_NORTHWEST:
+			new_y--;
+			break;
+
+		case DIRECTION_SOUTH:
+		case DIRECTION_SOUTHEAST:
+		case DIRECTION_SOUTHWEST:
+			new_y++;
+			break;
+
+		default:
+			;
+	}
+
+	return new_y;
 }
 

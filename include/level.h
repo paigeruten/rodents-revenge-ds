@@ -16,7 +16,7 @@ const u8 MAX_LEVELS = 128;
 const u8 LEVEL_X = 36;
 const u8 LEVEL_Y = 4;
 
-enum {
+enum GameTile {
 	TILE_EMPTY,
 	TILE_MOVABLE_BLOCK,
 	TILE_STATIONARY_BLOCK,

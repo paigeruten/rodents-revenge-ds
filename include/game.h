@@ -31,6 +31,11 @@ const Color BACKGROUND_COLOR = MENU_BACKGROUND_COLOR;
 
 const u8 SINKHOLE_TIME_LIMIT = 5;
 
+const u8 YARN_SPAWN_FREQUENCY = 8;
+const u32 YARN_MAX_LIFESPAN = 1800;
+const u32 YARN_SPAWN_TIME = 30;
+const u8 YARN_SPEED = 3;
+
 enum Direction {
 	DIRECTION_NORTH,
 	DIRECTION_NORTHEAST,
@@ -53,7 +58,16 @@ enum PlayerState {
 enum YarnState {
 	YARN_SITTING,
 	YARN_SPAWNING,
-	YARN_MOVING
+	YARN_MOVING,
+	YARN_DEAD
+};
+
+struct Yarn {
+	u8 x;
+	u8 y;
+	YarnState state;
+	Direction direction;
+	u32 lifespan;
 };
 
 class Game {
@@ -80,15 +94,12 @@ class Game {
 		u8 cats_y[MAX_CATS];
 		u8 num_cats;
 		u8 num_sitting_cats;
-		u8 yarns_x[MAX_YARNS];
-		u8 yarns_y[MAX_YARNS];
-		YarnState yarns_state[MAX_YARNS];
-		u8 num_yarns;
+		Yarn yarns[MAX_YARNS];
 		Button *back_button;
 		bool fast_forwarding;
 		bool done_level;
+		bool draw_clock;
 
-		void load_level();
 		void play_level();
 		void wait_in_sinkhole(u32 current_time);
 		void die();
@@ -99,6 +110,7 @@ class Game {
 		void spawn_cats();
 		void spawn_single_cat();
 		void spawn_yarn();
+		void random_border_tile(u8 *x, u8 *y);
 		void random_empty_tile(u8 *x, u8 *y);
 		void move_cats();
 		void move_cat(u8 cat_num);
@@ -108,6 +120,9 @@ class Game {
 		void update_score();
 		void update_lives();
 };
+
+s32 move_x(s32 current_x, Direction direction);
+s32 move_y(s32 current_y, Direction direction);
 
 #endif
 

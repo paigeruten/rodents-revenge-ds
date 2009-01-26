@@ -411,9 +411,9 @@ void Game::spawn_yarn() {
 	random_border_tile(&yarn_x, &yarn_y);
 
 	if (yarn_x == 0 || yarn_x == LEVEL_WIDTH - 1) {
-		level.set_tile(yarn_x, yarn_y, TILE_BORDER_OPENING_VERTICAL);
-	} else {
 		level.set_tile(yarn_x, yarn_y, TILE_BORDER_OPENING_HORIZONTAL);
+	} else {
+		level.set_tile(yarn_x, yarn_y, TILE_BORDER_OPENING_VERTICAL);
 	}
 
 	for (u8 i = 0; i < MAX_YARNS; i++) {

@@ -1,8 +1,8 @@
 #include <nds.h>
 #include <stdio.h>
-#include "keyboard.h"
+#include "rrkeyboard.h"
 
-Keyboard::Keyboard(const char *filename, Canvas *the_canvas, Font *the_font, u8 the_key_width, u8 space_bar_width) {
+RRKeyboard::RRKeyboard(const char *filename, Canvas *the_canvas, Font *the_font, u8 the_key_width, u8 space_bar_width) {
 	canvas = the_canvas;
 	font = the_font;
 	key_width = the_key_width;
@@ -24,10 +24,10 @@ Keyboard::Keyboard(const char *filename, Canvas *the_canvas, Font *the_font, u8 
 	colors.highlight_text = RGB(2, 8, 14);
 }
 
-Keyboard::~Keyboard() {
+RRKeyboard::~RRKeyboard() {
 }
 
-char Keyboard::key_pressed(touchPosition stylus) {
+char RRKeyboard::key_pressed(touchPosition stylus) {
 	// Use alternate keyboard if they are holding shift
 	u8 which_keyboard;
 	if (shift) {
@@ -94,7 +94,7 @@ char Keyboard::key_pressed(touchPosition stylus) {
 	return the_pressed_key;
 }
 
-KeyboardStatus Keyboard::load_keyboard(const char *filename) {
+KeyboardStatus RRKeyboard::load_keyboard(const char *filename) {
 	FILE *keyboardfile = fopen(filename, "r");
 
 	u16 current_char_index = 0;
@@ -176,7 +176,7 @@ KeyboardStatus Keyboard::load_keyboard(const char *filename) {
 	return KEYBOARD_OK;
 }
 
-void Keyboard::print_key(char key, u16 x, u16 y, bool highlighted) const {
+void RRKeyboard::print_key(char key, u16 x, u16 y, bool highlighted) const {
 	// If highlighted, change the colors.
 	Color text_color;
 	Color key_background_color;
@@ -210,7 +210,7 @@ void Keyboard::print_key(char key, u16 x, u16 y, bool highlighted) const {
 	font->print_char(key, middle_x, middle_y, canvas, text_color);
 }
 
-void Keyboard::draw() const {
+void RRKeyboard::draw() const {
 	canvas->clear(colors.background);
 
 	// Use alternate keyboard if they are holding shift
@@ -246,7 +246,7 @@ void Keyboard::draw() const {
 	}
 }
 
-u32 Keyboard::calculate_keyboard_width() {
+u32 RRKeyboard::calculate_keyboard_width() {
 	u32 max_width = 0;
 
 	for (u8 current_keyboard = 0; current_keyboard <= 1; current_keyboard++) {
@@ -279,7 +279,7 @@ u32 Keyboard::calculate_keyboard_width() {
 	return max_width;
 }
 
-u32 Keyboard::calculate_keyboard_height() {
+u32 RRKeyboard::calculate_keyboard_height() {
 	u32 max_height = 0;
 
 	for (u8 current_keyboard = 0; current_keyboard <= 1; current_keyboard++) {

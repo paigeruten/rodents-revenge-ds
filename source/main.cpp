@@ -145,9 +145,6 @@ void reset_high_scores(void *fonts) {
 }
 
 int main(void) {
-	irqInit();
-	irqEnable(IRQ_VBLANK);
-
 	keysSetRepeat(10, 2);
 
 	init_screens();

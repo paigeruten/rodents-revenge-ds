@@ -4,7 +4,7 @@
 #include "canvas.h"
 #include "font.h"
 #include "options.h"
-#include "keyboard.h"
+#include "rrkeyboard.h"
 #include "textbox.h"
 #include "menu.h"
 #include "str.h"

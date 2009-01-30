@@ -1,5 +1,5 @@
-#ifndef _keyboard_h
-#define _keyboard_h
+#ifndef _rrkeyboard_h
+#define _rrkeyboard_h
 
 #include "color.h"
 #include "canvas.h"
@@ -27,11 +27,11 @@ const char KEYBOARD_NEW_ROW = 5;
 const bool KEY_HIGHLIGHTED = true;
 const bool KEY_UNHIGHLIGHTED = false;
 
-class Keyboard {
+class RRKeyboard {
 	public:
 		// Constructors
-		Keyboard(const char *filename, Canvas *the_canvas, Font *the_font, u8 the_key_width, u8 space_bar_width);
-		~Keyboard();
+		RRKeyboard(const char *filename, Canvas *the_canvas, Font *the_font, u8 the_key_width, u8 space_bar_width);
+		~RRKeyboard();
 
 		// Returns key that is currently pressed, and highlights/unhighlights it
 		char key_pressed(touchPosition stylus);

@@ -27,7 +27,7 @@ bool add_high_score(u32 score, Font *font, Font *keyboard_font) {
 		return false;
 	}
 
-	Keyboard keyboard(options.full_path("keyboards/default.kb"), &screen_bottom, keyboard_font, 17, 100);
+	RRKeyboard keyboard(options.full_path("keyboards/default.kb"), &screen_bottom, keyboard_font, 17, 100);
 	Textbox textbox(&screen_bottom, font);
 
 	textbox.set_x(5);

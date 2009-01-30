@@ -13,7 +13,7 @@
 const u8 NUM_PAGES = 5;
 
 void help(void *fonts);
-void print_help_page(FontSet *fonts, u8 page);
+void print_help_page(FontSet *fonts, u8 page, Canvas *buffer_top, Canvas *buffer_bottom);
 
 #endif
 

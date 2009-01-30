@@ -78,7 +78,7 @@ LevelId LevelSelector::select_level() {
 
 	while (true) {
 		scanKeys();
-		stylus = touchReadXY();
+		touchRead(&stylus);
 
 		if (button_ok.update(stylus) == BUTTON_CLICKED) {
 			return level.get_level(selected_button).id;

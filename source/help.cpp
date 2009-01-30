@@ -37,7 +37,7 @@ void help(void *fonts) {
 
 	while (1) {
 		scanKeys();
-		stylus = touchReadXY();
+		touchRead(&stylus);
 
 		if (button_prev.update(stylus) == BUTTON_CLICKED) {
 			if (page > 0) {

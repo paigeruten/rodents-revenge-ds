@@ -287,7 +287,10 @@ void Game::handle_input(u32 input, u32 current_time) {
 		draw_clock = true;
 	}
 
-	if (back_button->update(touchReadXY()) == BUTTON_CLICKED) {
+	touchPosition stylus;
+	touchRead(&stylus);
+
+	if (back_button->update(stylus) == BUTTON_CLICKED) {
 		done_level = true;
 		lives = 0;
 	}

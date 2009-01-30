@@ -49,7 +49,7 @@ bool add_high_score(u32 score, Font *font, Font *keyboard_font) {
 
 	while (1) {
 		scanKeys();
-		stylus = touchReadXY();
+		touchRead(&stylus);
 
 		if ((key = keyboard.key_pressed(stylus))) {
 			while (keysHeld() & KEY_TOUCH) { scanKeys(); swiWaitForVBlank(); }

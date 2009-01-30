@@ -26,7 +26,9 @@ ActionMenu *ActionMenu::select() {
 
 	while (1) {
 		scanKeys();
-		touchPosition stylus = touchReadXY();
+		touchPosition stylus;
+
+		touchRead(&stylus);
 
 		for (u8 i = 0; i < MAX_BUTTONS; i++) {
 			if (get_button(i)) {

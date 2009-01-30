@@ -98,7 +98,7 @@ void view_high_scores(void *fonts) {
 	touchPosition stylus;
 	while (1) {
 		scanKeys();
-		stylus = touchReadXY();
+		touchRead(&stylus);
 
 		if (button_back.update(stylus) == BUTTON_CLICKED) {
 			break;
@@ -134,7 +134,7 @@ void reset_high_scores(void *fonts) {
 	touchPosition stylus;
 	while (1) {
 		scanKeys();
-		stylus = touchReadXY();
+		touchRead(&stylus);
 
 		if (button_back.update(stylus) == BUTTON_CLICKED) {
 			break;

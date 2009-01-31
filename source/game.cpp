@@ -437,7 +437,7 @@ void Game::random_border_tile(u8 *x, u8 *y) {
 	u8 border_tiles_y[LEVEL_WIDTH * 2 + LEVEL_HEIGHT * 2];
 	u8 num_border_tiles = 0;
 
-	for (u8 tile_x = 0; tile_x < LEVEL_WIDTH; tile_x++) {
+	for (u8 tile_x = 1; tile_x < LEVEL_WIDTH - 1; tile_x++) {
 		for (u8 tile_y = 0; tile_y < LEVEL_HEIGHT; tile_y += LEVEL_HEIGHT - 1) {
 			if (level.get_tile(tile_x, tile_y) == TILE_STATIONARY_BLOCK) {
 				border_tiles_x[num_border_tiles] = tile_x;
@@ -447,7 +447,7 @@ void Game::random_border_tile(u8 *x, u8 *y) {
 		}
 	}
 
-	for (u8 tile_y = 0; tile_y < LEVEL_HEIGHT; tile_y++) {
+	for (u8 tile_y = 1; tile_y < LEVEL_HEIGHT - 1; tile_y++) {
 		for (u8 tile_x = 0; tile_x < LEVEL_HEIGHT; tile_x += LEVEL_WIDTH - 1) {
 			if (level.get_tile(tile_x, tile_y) == TILE_STATIONARY_BLOCK) {
 				border_tiles_x[num_border_tiles] = tile_x;
@@ -606,15 +606,22 @@ void Game::move_yarn(u8 yarn_num) {
 		bool off_map = (new_x < 0 || new_y < 0 || new_x >= LEVEL_WIDTH || new_y >= LEVEL_HEIGHT);
 		bool blocking_tile = (tile != TILE_EMPTY && tile != TILE_CAT && tile != TILE_MOUSE && tile != TILE_MOUSE_SINKHOLE);
 
+		bool at_border = (yarns[yarn_num].x == 0 || yarns[yarn_num].y == 0 || yarns[yarn_num].x == LEVEL_WIDTH - 1 || yarns[yarn_num].y == LEVEL_HEIGHT - 1);
+
 		if (off_map || blocking_tile) {
 			if (yarns[yarn_num].lifespan > YARN_MAX_LIFESPAN) {
 				yarns[yarn_num].state = YARN_DEAD;
-				level.set_tile(yarns[yarn_num].x, yarns[yarn_num].y, TILE_EMPTY);
+
+				if (at_border) {
+					level.set_tile(yarns[yarn_num].x, yarns[yarn_num].y, TILE_STATIONARY_BLOCK);
+				} else {
+					level.set_tile(yarns[yarn_num].x, yarns[yarn_num].y, TILE_EMPTY);
+				}
 			} else {
 				yarns[yarn_num].state = YARN_SITTING;
 			}
 		} else {
-			if (yarns[yarn_num].x == 0 || yarns[yarn_num].y == 0 || yarns[yarn_num].x == LEVEL_WIDTH - 1 || yarns[yarn_num].y == LEVEL_HEIGHT - 1) {
+			if (at_border) {
 				level.set_tile(yarns[yarn_num].x, yarns[yarn_num].y, TILE_STATIONARY_BLOCK);
 			} else {
 				level.set_tile(yarns[yarn_num].x, yarns[yarn_num].y, TILE_EMPTY);

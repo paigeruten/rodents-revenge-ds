@@ -68,6 +68,7 @@ struct Yarn {
 	YarnState state;
 	Direction direction;
 	u32 lifespan;
+	TileNum last_tile;
 };
 
 class Game {

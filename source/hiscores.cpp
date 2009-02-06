@@ -40,7 +40,7 @@ bool add_high_score(u32 score, Font *font, Font *keyboard_font) {
 
 	font->print_string("You've got a top-10 high", 10, 10, &screen_bottom, RGB(31, 15, 0));
 	font->print_string("score! Please enter your", 10, 25, &screen_bottom, RGB(31, 15, 0));
-	font->print_string("name.", 10, 40, &screen_bottom, RGB(31, 15, 0));
+	font->print_string("name. (Press A to skip.)", 10, 40, &screen_bottom, RGB(31, 15, 0));
 
 	char name[256] = "";
 	touchPosition stylus;

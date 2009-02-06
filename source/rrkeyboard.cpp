@@ -77,6 +77,12 @@ char RRKeyboard::key_pressed(touchPosition stylus) {
 				               stylus.py >= key_top &&
 				               stylus.py < key_bottom);
 
+				// Keypad shortcuts
+				if (!key_pressed) {
+					if (current_key == '\n' && (keysDown() & KEY_A)) key_pressed = true;
+					if (current_key == '\b' && (keysDown() & KEY_B)) key_pressed = true;
+				}
+
 				if (key_pressed) {
 					print_key(current_key, current_key_x, current_key_y, KEY_HIGHLIGHTED);
 					the_pressed_key = current_key;

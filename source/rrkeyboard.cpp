@@ -29,12 +29,7 @@ RRKeyboard::~RRKeyboard() {
 
 char RRKeyboard::key_pressed(touchPosition stylus) {
 	// Use alternate keyboard if they are holding shift
-	u8 which_keyboard;
-	if (shift) {
-		which_keyboard = 1;
-	} else {
-		which_keyboard = 0;
-	}
+	u8 which_keyboard = (shift ? 1 : 0);
 
 	// Loop through the keyboard keys
 	u8 current_key_x = keyboard_x;

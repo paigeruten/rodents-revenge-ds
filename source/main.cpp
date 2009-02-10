@@ -32,9 +32,6 @@ void init_screens(void) {
 	BACKGROUND_SUB.bg3_rotation.ydy = 1 << 8;
 }
 
-void blah(void *data) {
-}
-
 void play_game(void *fonts) {
 	Game game(&screen_top, ((FontSet *)fonts)->large_font);
 	u32 score = game.begin();

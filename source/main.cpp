@@ -32,13 +32,17 @@ void init_screens(void) {
 	BACKGROUND_SUB.bg3_rotation.ydy = 1 << 8;
 }
 
+void draw_titlescreen() {
+	// Load title screen
+	Image image_title(&screen_top, options.full_path("images/title.img"));
+	image_title.draw(0, 0);
+}
+
 void play_game(void *fonts) {
 	Game game(&screen_top, ((FontSet *)fonts)->large_font);
 	u32 score = game.begin();
 
-	// Load title screen
-	Image image_title(&screen_top, options.full_path("images/title.img"));
-	image_title.draw(0, 0);
+	draw_titlescreen();
 
 	add_high_score(score, ((FontSet *)fonts)->large_font, ((FontSet *)fonts)->small_font);
 }
@@ -69,9 +73,7 @@ void change_starting_level(void *fonts) {
 	level_selector.set_selected_level(options.get_start_level());
 	options.set_start_level(level_selector.select_level());
 
-	// Load title screen
-	Image image_title(&screen_top, options.full_path("images/title.img"));
-	image_title.draw(0, 0);
+	draw_titlescreen();
 }
 
 void view_high_scores(void *fonts) {
@@ -104,9 +106,7 @@ void view_high_scores(void *fonts) {
 		swiWaitForVBlank();
 	}
 
-	// Load title screen
-	Image image_title(&screen_top, options.full_path("images/title.img"));
-	image_title.draw(0, 0);
+	draw_titlescreen();
 }
 
 void reset_high_scores(void *fonts) {
@@ -191,9 +191,7 @@ int main(void) {
 	menu.add_button(RESET_HIGH_SCORES_MENU, "Back", HIGH_SCORES_MENU);
 	menu.add_button(RESET_HIGH_SCORES_MENU, "Confirm Reset", &reset_high_scores, (void *)&fonts);
 
-	// Load title screen
-	Image image_title(&screen_top, options.full_path("images/title.img"));
-	image_title.draw(0, 0);
+	draw_titlescreen();
 
 	menu.begin(MAIN_MENU);
 

@@ -17,7 +17,7 @@ const u8 NUM_LIVES = 3;
 const u8 MAX_CATS = 32;
 const u8 MAX_CATS_TO_SPAWN = 3;
 
-const u8 MAX_YARNS = 32;
+const u8 MAX_YARNS = 16;
 
 const u8 SCORE_X = SCREEN_WIDTH - 55;
 const u8 SCORE_Y = 15;

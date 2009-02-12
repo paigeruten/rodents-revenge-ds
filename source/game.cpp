@@ -605,7 +605,7 @@ void Game::move_yarn(u8 yarn_num) {
 		TileNum tile = level.get_tile(new_x, new_y);
 
 		bool off_map = (new_x < 0 || new_y < 0 || new_x >= LEVEL_WIDTH || new_y >= LEVEL_HEIGHT);
-		bool blocking_tile = (tile != TILE_EMPTY && tile != TILE_CAT && tile != TILE_MOUSE && tile != TILE_MOUSE_SINKHOLE);
+		bool blocking_tile = (tile != TILE_EMPTY && tile != TILE_MOUSE && tile != TILE_MOUSE_SINKHOLE);
 
 		if (off_map || blocking_tile) {
 			if (yarns[yarn_num].lifespan > YARN_MAX_LIFESPAN) {

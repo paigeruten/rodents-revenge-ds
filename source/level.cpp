@@ -297,6 +297,7 @@ void Level::init(Canvas *the_canvas) {
 	tiles[11].load_from_file(options.full_path("tiles/border_opening_horizontal.tile"));
 	tiles[12].load_from_file(options.full_path("tiles/cat_sitting.tile"));
 	tiles[13].load_from_file(options.full_path("tiles/mouse_dead.tile"));
+	tiles[14].load_from_file(options.full_path("tiles/yarn_dead.tile"));
 
 	map.add_tile(&tiles[0], TILE_EMPTY);
 	map.add_tile(&tiles[1], TILE_MOVABLE_BLOCK);
@@ -312,6 +313,7 @@ void Level::init(Canvas *the_canvas) {
 	map.add_tile(&tiles[11], TILE_BORDER_OPENING_HORIZONTAL);
 	map.add_tile(&tiles[12], TILE_CAT_SITTING);
 	map.add_tile(&tiles[13], TILE_MOUSE_DEAD);
+	map.add_tile(&tiles[14], TILE_YARN_DEAD);
 
 	load_levels_from_file(options.full_path("levels"));
 }

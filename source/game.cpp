@@ -609,9 +609,9 @@ void Game::move_yarn(u8 yarn_num) {
 
 		if (off_map || blocking_tile) {
 			if (yarns[yarn_num].lifespan > YARN_MAX_LIFESPAN) {
-				yarns[yarn_num].state = YARN_DEAD;
+				yarns[yarn_num].state = YARN_DYING;
 
-				level.set_tile(yarns[yarn_num].x, yarns[yarn_num].y, yarns[yarn_num].last_tile);
+				level.set_tile(yarns[yarn_num].x, yarns[yarn_num].y, TILE_YARN_DEAD);
 			} else {
 				yarns[yarn_num].state = YARN_SITTING;
 			}
@@ -622,12 +622,18 @@ void Game::move_yarn(u8 yarn_num) {
 
 			if (tile == TILE_MOUSE || tile == TILE_MOUSE_SINKHOLE) {
 				state = STATE_DYING;
+				yarns[yarn_num].last_tile = TILE_EMPTY;
 			}
 
 			level.set_tile(new_x, new_y, TILE_YARN);
 
 			yarns[yarn_num].x = new_x;
 			yarns[yarn_num].y = new_y;
+		}
+	} else if (yarns[yarn_num].state == YARN_DYING) {
+		if (yarns[yarn_num].lifespan > YARN_MAX_LIFESPAN + YARN_EXPLOSION_TIME) {
+			yarns[yarn_num].state = YARN_DEAD;
+			level.set_tile(yarns[yarn_num].x, yarns[yarn_num].y, yarns[yarn_num].last_tile);
 		}
 	}
 

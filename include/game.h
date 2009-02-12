@@ -35,6 +35,7 @@ const u8 YARN_SPAWN_FREQUENCY = 16;
 const u32 YARN_MAX_LIFESPAN = 100;
 const u32 YARN_SPAWN_TIME = 30;
 const u8 YARN_SPEED = 3;
+const u8 YARN_EXPLOSION_TIME = 7;
 
 enum Direction {
 	DIRECTION_NORTH,
@@ -59,6 +60,7 @@ enum YarnState {
 	YARN_SITTING,
 	YARN_SPAWNING,
 	YARN_MOVING,
+	YARN_DYING,
 	YARN_DEAD
 };
 

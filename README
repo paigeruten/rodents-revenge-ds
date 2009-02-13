@@ -2,6 +2,7 @@
 
 			      Rodent's Revenge DS
 				By Jeremy Ruten
+			     jeremy.ruten@gmail.com
 				  Version 1.00
 
 --------------------------------------------------------------------------------
@@ -13,7 +14,7 @@ Installation
 ------------
 
 1. Copy the 'rodents-revenge' folder to the 'data' folder of your memory card.
-   If you don't have a 'data' folder, create one.
+   If you don't have a 'data' folder, you will have to create one.
 2. DLDI-patch 'rodents-revenge.nds' unless your homebrew device does it for you
    (which is quite likely nowadays).
 3. Copy 'rodents-revenge.nds' anywhere on your memory card, and run it.
